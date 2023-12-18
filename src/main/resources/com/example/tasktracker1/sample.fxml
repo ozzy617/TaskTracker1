@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #E0FFFF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tasktracker1.ControllerS">
+<AnchorPane fx:id="anc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #E0FFFF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tasktracker1.ControllerMain">
    <children>
       <AnchorPane prefHeight="400.0" prefWidth="438.0" style="-fx-background-color: #AFEEEE;">
          <children>
@@ -15,11 +15,11 @@
                   <Font name="American Typewriter" size="37.0" />
                </font>
             </Label>
-            <RadioButton fx:id="taskTwo" layoutX="23.0" layoutY="230.0" mnemonicParsing="false" text="Задача 2" textFill="#3544a4">
-               <font>
-                  <Font name="American Typewriter" size="30.0" />
-               </font>
-            </RadioButton>
+<!--            <RadioButton fx:id="taskTwo" layoutX="23.0" layoutY="230.0" mnemonicParsing="false" text="Задача 2" textFill="#3544a4">-->
+<!--               <font>-->
+<!--                  <Font name="American Typewriter" size="30.0" />-->
+<!--               </font>-->
+<!--            </RadioButton>-->
          </children>
       </AnchorPane>
       <Button fx:id="bt" layoutX="444.0" layoutY="14.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #008080;" text="Добавить задачу" textFill="WHITE">
