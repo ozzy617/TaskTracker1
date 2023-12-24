@@ -10,7 +10,7 @@
    <children>
       <AnchorPane prefHeight="400.0" prefWidth="438.0" style="-fx-background-color: #AFEEEE;">
          <children>
-            <Label prefHeight="35.0" prefWidth="304.0" text="Список задач:">
+            <Label prefHeight="35.0" prefWidth="304.0" text="Список задач:" layoutX="5">
                <font>
                   <Font name="American Typewriter" size="37.0" />
                </font>

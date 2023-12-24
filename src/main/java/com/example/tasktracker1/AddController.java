@@ -5,10 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
-public class AddController {
+import java.sql.SQLException;
 
-    @FXML
-    private AnchorPane anc;
+public class AddController {
 
     @FXML
     private Button applyButton;
@@ -16,21 +15,21 @@ public class AddController {
     private TextField textTask;
 
     public String task;
-    private boolean flag = false;
 
     public void initialize() {
         applyButton.setOnAction(actionEvent -> {
-            flag = true;
+            DbOperator taskAdder = new DbOperator();
             task = textTask.getText();
+            try {
+                taskAdder.taskWriter(task);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             TaskTransporter.taskGetter(task);
             applyButton.getScene().getWindow().hide();
 
         });
     }
-    public void s(){
-        //System.out.println(listener);
-    }
-
-
-
 }
