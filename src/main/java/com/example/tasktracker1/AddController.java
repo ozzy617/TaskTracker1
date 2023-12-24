@@ -15,6 +15,7 @@ public class AddController {
     private TextField textTask;
 
     public String task;
+    public String h;
 
     public void initialize() {
         applyButton.setOnAction(actionEvent -> {
