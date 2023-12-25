@@ -4,7 +4,7 @@ import javafx.scene.Node;
 
 public class ChangePositionAnimation {
 
-    public ChangePositionAnimation(Node node){
+    public ChangePositionAnimation(Node node) {
         //ЗДЕСЬ БУДЕТ ДОБАВЛЕНА АНИМАЦИЯ
     }
 }
