@@ -8,17 +8,13 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class ControllerMain {
     @FXML
     private Button bt;
 
     public void initialize(){
-
         bt.setOnAction(actionEvent -> {
-            System.out.println("da");
-
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("addWindow.fxml"));
             try {

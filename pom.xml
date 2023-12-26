@@ -7,6 +7,7 @@
     <groupId>com.example</groupId>
     <artifactId>TaskTracker1</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>TaskTracker1</name>
 
     <properties>
