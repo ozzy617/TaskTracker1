@@ -13,7 +13,7 @@ public class ControllerMain {
     @FXML
     private Button bt;
 
-    public void initialize(){
+    public void initialize() {
         bt.setOnAction(actionEvent -> {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("addWindow.fxml"));

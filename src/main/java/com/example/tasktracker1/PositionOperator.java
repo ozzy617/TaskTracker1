@@ -5,26 +5,30 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class PositionOperator {
-    public static RadioButton buttonDesigner(String text, int pos){
+    private final static String BUTTONS_FONT = "American Typewriter Semibold";
+    private static int INITIAL_BUTTON_POS = 42;
+    private final static int BUTTONS_OFFSET = 28;
+
+    public RadioButton designButton(String text, int pos) {
         RadioButton radioButton = new RadioButton(text);
-        radioButton.setFont(Font.font("American Typewriter Semibold",15));
+        radioButton.setFont(Font.font(BUTTONS_FONT,15));
         radioButton.setTextFill(Color.DARKBLUE);
         radioButton.setLayoutX(10);
         radioButton.setLayoutY(pos);
-        radioButton.setPrefWidth(470);
+        radioButton.setPrefWidth(437);
         radioButton.setPrefHeight(40);
         return radioButton;
     }
 
-    private static int selectedPos = 42;
+    public void setActualPosition(int pos) {
+        INITIAL_BUTTON_POS = pos;
+    }
 
-    public static void setActualPosition(int pos){
-        selectedPos = pos;
+    public int getActualPosition() {
+        return INITIAL_BUTTON_POS;
     }
-    public static int getActualPosition(){
-        return selectedPos;
-    }
-    public static void actualPositionChanger(){
-        selectedPos += 28;
+
+    public void actualPositionChanger() {
+        INITIAL_BUTTON_POS += BUTTONS_OFFSET;
     }
 }

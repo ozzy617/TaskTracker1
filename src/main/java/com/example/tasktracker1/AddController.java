@@ -19,17 +19,24 @@ public class AddController {
     public void initialize() {
         applyButton.setOnAction(actionEvent -> {
             DbOperator taskAdder = new DbOperator();
-            task = textTask.getText();
-            try {
-                taskAdder.taskWriter(task);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            task = textTask.getText().trim();
+            if (chekStrexistance(task)) {
+                try {
+                    taskAdder.taskWriter(task);
+                } catch (ClassNotFoundException | SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                TaskTransporter.getTask(task);
             }
-            TaskTransporter.taskGetter(task);
             applyButton.getScene().getWindow().hide();
-
         });
+    }
+    private boolean chekStrexistance(String taskStr){
+        String string = taskStr.replaceAll(" ", "");
+        if (string.isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

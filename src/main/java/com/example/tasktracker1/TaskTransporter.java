@@ -8,7 +8,7 @@ public class TaskTransporter {
         listener = inputListener;
     }
 
-    public static void taskGetter(String task1) {
+    public static void getTask(String task1) {
         task = task1;
         listener.getTaskText(task);
     }
