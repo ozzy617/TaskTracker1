@@ -5,5 +5,4 @@ public class DBConfig {
     protected String dbUser = "postgres";
     protected String dbPass = "postgres";
     protected String dbName = "postgress";
-
 }

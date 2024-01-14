@@ -9,12 +9,16 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainAppWindow extends Application  {
 
@@ -63,11 +67,18 @@ public class MainAppWindow extends Application  {
     }
 
     private void constructButton(String text, int pos) {
+//        Line line = new Line();
+//        line.setStartX(150.0f);
+//        line.setStartY(140.0f);
+//        line.setEndX(450.0f);    <---- ЛИНИИИ!!!
+//        line.setEndY(140.0f);
+//        pane.getChildren().add(line);
         //ПОФИКСИТЬ БАГ БЛЯТЬ ОЧЕРЕДНОЙ С ПРОБЕЛАМИ
         RadioButton button = positionOperator.designButton(text, pos);
         pane.getChildren().add(button);
         radioButtonList.add(button);
         button.setToggleGroup(buttonGroup);
+        button.isArmed();
     }
 
     private void deletePickedButton(String selectedButtonText, RadioButton selectedButton) {
@@ -90,12 +101,50 @@ public class MainAppWindow extends Application  {
         }
     }
 
-    private void shiftButtons(){
+    private void shiftButtons() {
+        //int c  = 0;
         for (int i = selectedButtonIndex; i < radioButtonList.size(); i++) {
             RadioButton button = radioButtonList.get(i);
             int nextButtonPosition = (int) button.getLayoutY();
-            button.setLayoutY(positionOperator.getActualPosition());
-            positionOperator.setActualPosition(nextButtonPosition);
+            ChangePositionAnimation anim = new ChangePositionAnimation(button);
+            System.out.println(button.getLayoutY());
+            anim.playAnim();
+            BackwardAnim an = new BackwardAnim(button,positionOperator.getActualPosition());
+            TimerTask task2 = new TimerTask() {
+                public void run() {
+                    button.setLayoutY(positionOperator.getActualPosition());
+                    positionOperator.setActualPosition(nextButtonPosition);
+
+                }
+            };
+
+            TimerTask task1 = new TimerTask() {
+                public void run() {
+                    an.playAnim();
+                    long delay1 = 1L;
+                    Timer timer2 = new Timer();
+                    timer2.schedule(task2,delay1); ///ВАЖНО - если вылезет башг с кнопкой - исправить
+
+//                    button.setLayoutY(positionOperator.getActualPosition());
+//                    positionOperator.setActualPosition(nextButtonPosition);
+
+                }
+            };
+            //ПОЧИСТИТЬ КОД!!!!!
+
+            Timer timer1 = new Timer();
+
+            long delay = 200L;
+            timer1.schedule(task1, delay);
+
+
+            System.out.println(button.getLayoutY());
+            //c += 28;
+
+
+            //button.setLayoutY(positionOperator.getActualPosition());
+            //positionOperator.setActualPosition(nextButtonPosition);
+            System.out.println(button.getLayoutY());
         }
     }
 
@@ -109,4 +158,5 @@ public class MainAppWindow extends Application  {
             positionOperator.actualPositionChanger();
         }
     }
+
 }

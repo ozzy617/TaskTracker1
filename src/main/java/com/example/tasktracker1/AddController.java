@@ -31,7 +31,7 @@ public class AddController {
             applyButton.getScene().getWindow().hide();
         });
     }
-    private boolean chekStrexistance(String taskStr){
+    private boolean chekStrexistance(String taskStr) {
         String string = taskStr.replaceAll(" ", "");
         if (string.isEmpty()) {
             return false;

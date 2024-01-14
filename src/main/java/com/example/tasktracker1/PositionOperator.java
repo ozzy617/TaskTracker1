@@ -15,8 +15,8 @@ public class PositionOperator {
         radioButton.setTextFill(Color.DARKBLUE);
         radioButton.setLayoutX(10);
         radioButton.setLayoutY(pos);
-        radioButton.setPrefWidth(437);
-        radioButton.setPrefHeight(40);
+        radioButton.setPrefWidth(437);//437
+        radioButton.setPrefHeight(20);//40
         return radioButton;
     }
 
