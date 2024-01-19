@@ -1,22 +1,19 @@
 package com.example.tasktracker1;
 
-import javafx.animation.PathTransition;
-import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Node;
 import javafx.util.Duration;
 
-public class ChangePositionAnimation {
+public class BackwardAnim {
     private TranslateTransition tt;
     private Node node;
     private int p;
 
-    public ChangePositionAnimation(Node node) {
-
-        tt = new TranslateTransition(Duration.seconds(0.2),node);
+    public BackwardAnim(Node node, int pos){
+        tt = new TranslateTransition(Duration.millis(1),node);
         //tt.setFromX(0f);
         tt.setFromY(0f);
-        tt.setByY(-28f);
+        tt.setByY(0f);
         tt.setCycleCount(1);
         //ЗДЕСЬ БУДЕТ ДОБАВЛЕНА АНИМАЦИЯ
     }
@@ -26,9 +23,5 @@ public class ChangePositionAnimation {
         tt.playFromStart();
 //        tt = new TranslateTransition(Duration.millis(1),node);
 //        tt.setByY(28);
-    }
-
-    public void s() {
-
     }
 }

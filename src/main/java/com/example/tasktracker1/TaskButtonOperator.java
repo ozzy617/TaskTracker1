@@ -4,7 +4,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class PositionOperator {
+public class TaskButtonOperator {
     private final static String BUTTONS_FONT = "American Typewriter Semibold";
     private static int INITIAL_BUTTON_POS = 42;
     private final static int BUTTONS_OFFSET = 28;
@@ -13,7 +13,7 @@ public class PositionOperator {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setFont(Font.font(BUTTONS_FONT,15));
         radioButton.setTextFill(Color.DARKBLUE);
-        radioButton.setLayoutX(10);
+        radioButton.setLayoutX(290);
         radioButton.setLayoutY(pos);
         radioButton.setPrefWidth(437);//437
         radioButton.setPrefHeight(20);//40
@@ -30,5 +30,8 @@ public class PositionOperator {
 
     public void actualPositionChanger() {
         INITIAL_BUTTON_POS += BUTTONS_OFFSET;
+    }
+    public void downgradeActualPosition() {
+        INITIAL_BUTTON_POS -= BUTTONS_OFFSET;
     }
 }

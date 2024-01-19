@@ -5,11 +5,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Line;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,50 +21,86 @@ import java.util.TimerTask;
 public class MainAppWindow extends Application  {
 
     private AnchorPane pane;
-    private final ToggleGroup buttonGroup = new ToggleGroup();
+    private final String selectedButtonActive = "-fx-background-color: #0000CD";
+    private final String selectedButtonInactive = "-fx-background-color: #4682B4";
+    private final ToggleGroup rButtonGroup = new ToggleGroup();
+    private final ToggleGroup lButtonGroup = new ToggleGroup();
+    private final LinkedList<ToggleButton> listButtons = new LinkedList<>();
     private final LinkedList<RadioButton> radioButtonList = new LinkedList<>();
-    private ArrayList<String> stringButtonList = new ArrayList<>();
+    private ArrayList<String> stringRButtonList = new ArrayList<>();
+
+    private ToggleButton selectedLButton = new ToggleButton();
+
+    private ArrayList<String> stringLButtonList = new ArrayList<>();
     private int selectedButtonIndex;
     private final DbOperator dbOperator = new DbOperator();
-    private final PositionOperator positionOperator = new PositionOperator();
-
+    private final TaskButtonOperator rButtonPositionOperator = new TaskButtonOperator();
+    private final ListButtonOperator listButtonPositionOperator = new ListButtonOperator();
+    private ToggleButton lastSelectedButton = new ToggleButton();
 
     @Override
     public void start(Stage stage) throws IOException, SQLException, ClassNotFoundException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainAppWindow.class.getResource("sample.fxml"));
         pane = new AnchorPane();
         pane.getChildren().add(fxmlLoader.load());
-        stringButtonList = dbOperator.loadValues();
 
-        setupButtons();
+        setupLButtons();
 
-        TaskTransporter taskTransporter = new TaskTransporter();
+        TaskAndListNameTransporter taskTransporter = new TaskAndListNameTransporter();
         TaskHelper taskGetter = new TaskHelper();
         taskTransporter.setTaskListener(taskGetter);
-        Scene scene = new Scene(pane, 600, 300);
+
+        TaskAndListNameTransporter listNameTransporter = new TaskAndListNameTransporter();
+        ListNameHelper listNameGetter = new ListNameHelper();
+        listNameTransporter.setListNameListener(listNameGetter);
+
+        Scene scene = new Scene(pane, 750, 650);
         stage.setTitle("TaskTracker");
         stage.setScene(scene);
         stage.show();
 
-        buttonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+        rButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
                 RadioButton selectedButton =  (RadioButton) newValue;
                 String selectedButtonText  =  selectedButton.getText();
 
+                deletePickedButton(selectedButtonText,selectedButton);
+                shiftButtons();
+
                 try {
-                    dbOperator.taskDeleter(selectedButtonText);
+                    dbOperator.taskDeleter(selectedButtonText,selectedLButton.getText());
                 } catch (ClassNotFoundException  | SQLException e){
                     throw new RuntimeException(e);
                 }
+            }
+        });
+        lButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
+                selectedLButton = (ToggleButton) newValue;
+                //System.out.println(lastSelectedButton.getText() + " G5");
+                // stringRButtonList = dbOperator.loadValues();
+                lastSelectedButton.setDisable(false);
+                lastSelectedButton.setStyle(selectedButtonInactive);
+                selectedLButton.setStyle(selectedButtonActive);
+                selectedLButton.setDisable(true);
+                lastSelectedButton = selectedLButton;
 
-                deletePickedButton(selectedButtonText,selectedButton);
-                shiftButtons();
+                try {
+                    stringRButtonList = dbOperator.loadListValues(selectedLButton.getText());
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                deleteRButtons();
+                setupRButtons();
             }
         });
     }
 
-    private void constructButton(String text, int pos) {
+    private void constructRButton(String text, int pos) {
 //        Line line = new Line();
 //        line.setStartX(150.0f);
 //        line.setStartY(140.0f);
@@ -74,11 +108,28 @@ public class MainAppWindow extends Application  {
 //        line.setEndY(140.0f);
 //        pane.getChildren().add(line);
         //ПОФИКСИТЬ БАГ БЛЯТЬ ОЧЕРЕДНОЙ С ПРОБЕЛАМИ
-        RadioButton button = positionOperator.designButton(text, pos);
-        pane.getChildren().add(button);
-        radioButtonList.add(button);
-        button.setToggleGroup(buttonGroup);
-        button.isArmed();
+        RadioButton rButton = rButtonPositionOperator.designButton(text, pos);
+        pane.getChildren().add(rButton);
+        radioButtonList.add(rButton);
+        rButton.setToggleGroup(rButtonGroup);
+        //rButton.isArmed();
+    }
+
+    private void deleteRButtons(){
+        for (int i = 0; i < radioButtonList.size(); i++) {
+            RadioButton button = radioButtonList.get(i);
+            pane.getChildren().remove(radioButtonList.get(i));
+        }
+        rButtonPositionOperator.setActualPosition(42);
+        radioButtonList.clear();
+    }
+
+    private void constructLButton(String text, int pos) {
+        ToggleButton listButton = listButtonPositionOperator.designButton(text,pos);
+        pane.getChildren().add(listButton);
+        listButtons.add(listButton);
+        listButton.setToggleGroup(lButtonGroup);
+
     }
 
     private void deletePickedButton(String selectedButtonText, RadioButton selectedButton) {
@@ -88,74 +139,105 @@ public class MainAppWindow extends Application  {
                 pane.getChildren().remove(radioButtonList.get(i));
                 selectedButtonIndex = i;
                 radioButtonList.remove(i);
-                positionOperator.setActualPosition((int) selectedButton.getLayoutY());
+                rButtonPositionOperator.setActualPosition((int) selectedButton.getLayoutY());
                 break;
             }
         }
     }
-    private void setupButtons(){
-        for (String s : stringButtonList) {
-            int actualPosition = positionOperator.getActualPosition();
-            constructButton(s,actualPosition);
-            positionOperator.actualPositionChanger();
+    private void setupRButtons(){
+        for (String s : stringRButtonList) {
+            int actualPosition = rButtonPositionOperator.getActualPosition();
+            constructRButton(s,actualPosition);
+            rButtonPositionOperator.actualPositionChanger();
+        }
+    }
+    private void setupLButtons() throws SQLException, ClassNotFoundException {
+        stringLButtonList = dbOperator.loadListNames();
+        for (String s : stringLButtonList) {
+            System.out.println(s);
+            s = s.replaceAll("_", " ");
+            int actualPosition = listButtonPositionOperator.getActualPosition();
+            constructLButton(s,actualPosition);
+            listButtonPositionOperator.actualPositionChanger();
         }
     }
 
     private void shiftButtons() {
-        //int c  = 0;
+
         for (int i = selectedButtonIndex; i < radioButtonList.size(); i++) {
             RadioButton button = radioButtonList.get(i);
-            int nextButtonPosition = (int) button.getLayoutY();
             ChangePositionAnimation anim = new ChangePositionAnimation(button);
-            System.out.println(button.getLayoutY());
             anim.playAnim();
-            BackwardAnim an = new BackwardAnim(button,positionOperator.getActualPosition());
-            TimerTask task2 = new TimerTask() {
-                public void run() {
-                    button.setLayoutY(positionOperator.getActualPosition());
-                    positionOperator.setActualPosition(nextButtonPosition);
+        }
+
+        TimerTask task1 = new TimerTask() {
+            public void run() {
+                for (int i = selectedButtonIndex; i < radioButtonList.size(); i++){
+                    RadioButton button = radioButtonList.get(i);
+                    BackwardAnim backwardAniman = new BackwardAnim(button,rButtonPositionOperator.getActualPosition());
+                    backwardAniman.playAnim();
+                }
+            }
+        };
+        Timer timer1 = new Timer();
+        long delay = 203L;
+        timer1.schedule(task1, delay);
+        TimerTask task2 = new TimerTask() {
+            public void run() {
+                for (int i = selectedButtonIndex; i < radioButtonList.size(); i++) {
+                    RadioButton button = radioButtonList.get(i);
+                    int nextButtonPosition = (int) button.getLayoutY();
+                    button.setLayoutY(rButtonPositionOperator.getActualPosition());
+                    rButtonPositionOperator.setActualPosition(nextButtonPosition);
 
                 }
-            };
+            }
+        };
+        Timer timer2 = new Timer();
+        long delay3 = 210L;
+        timer2.schedule(task2,delay3);
+    }
 
-            TimerTask task1 = new TimerTask() {
-                public void run() {
-                    an.playAnim();
-                    long delay1 = 1L;
-                    Timer timer2 = new Timer();
-                    timer2.schedule(task2,delay1); ///ВАЖНО - если вылезет башг с кнопкой - исправить
+    public class TaskHelper implements TaskAndListListener {
 
-//                    button.setLayoutY(positionOperator.getActualPosition());
-//                    positionOperator.setActualPosition(nextButtonPosition);
-
+        @Override
+        public void getStringText(String text) {
+            DbOperator taskAdder = new DbOperator();
+            StringOperator lineOperator = new StringOperator();
+            if (lineOperator.chekStrexistance(text)) {
+                try {
+                    taskAdder.taskWriter(text, selectedLButton.getText());
+                    String task = text;
+                    int actualPos = rButtonPositionOperator.getActualPosition();
+                    constructRButton(task,actualPos);
+                    rButtonPositionOperator.actualPositionChanger();
+                } catch (ClassNotFoundException | SQLException e) {
+                    throw new RuntimeException(e);
                 }
-            };
-            //ПОЧИСТИТЬ КОД!!!!!
-
-            Timer timer1 = new Timer();
-
-            long delay = 200L;
-            timer1.schedule(task1, delay);
-
-
-            System.out.println(button.getLayoutY());
-            //c += 28;
-
-
-            //button.setLayoutY(positionOperator.getActualPosition());
-            //positionOperator.setActualPosition(nextButtonPosition);
-            System.out.println(button.getLayoutY());
+            }
         }
     }
 
-    public class TaskHelper implements TaskListener {
+    public class ListNameHelper implements TaskAndListListener {
 
         @Override
-        public void getTaskText(String taskText) {
-            String task = taskText;
-            int actualPos = positionOperator.getActualPosition();
-            constructButton(task,actualPos);
-            positionOperator.actualPositionChanger();
+        public void getStringText(String text) {
+            String listName = text;
+            System.out.println(listName);
+            int actualPos = listButtonPositionOperator.getActualPosition();
+            constructLButton(listName,actualPos);
+            listButtonPositionOperator.actualPositionChanger();
+
+        }
+    }
+
+    public class AnimListener implements TaskAndListListener {
+
+
+        @Override
+        public void getStringText(String text) {
+            rButtonPositionOperator.setActualPosition(42);
+            setupRButtons();
         }
     }
 

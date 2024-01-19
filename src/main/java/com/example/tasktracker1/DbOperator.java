@@ -18,26 +18,32 @@ public class DbOperator extends DBConfig {
         return DriverManager.getConnection(connectionString,auth);
     }
 
-    public void taskWriter(String task) throws SQLException, ClassNotFoundException {
-        String insert = "INSERT INTO " + TABLE_NAME +"(" + COLUMN_NAME + ")" + "VALUES(?)";
+    public void taskWriter(String task, String listName) throws SQLException, ClassNotFoundException {
+        String tName = "a" + listName;
+        tName = tName.replaceAll(" ","_");
+        String insert = "INSERT INTO " + tName +"(" + COLUMN_NAME + ")" + "VALUES(?)";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(insert);
         preparedStatement.setString(1, task);
         getDbConnection().close();
         preparedStatement.executeUpdate();
     }
 
-    public void taskDeleter(String task) throws ClassNotFoundException, SQLException {
-        String delete = "DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME + " = "  + "'" + task + "'" + ";";
+    public void taskDeleter(String task, String tableName) throws ClassNotFoundException, SQLException {
+        String tName = "a" + tableName;
+        tName = tName.replaceAll(" ","_");
+        String delete = "DELETE FROM " + tName + " WHERE " + COLUMN_NAME + " = "  + "'" + task + "'" + ";";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(delete);
        // preparedStatement.setC(1,task);// ПОЧЕМУ НЕ РАБОТАЕТ ЭТА ВАРИАЦИЯ?
         preparedStatement.executeUpdate();
         getDbConnection().close();
     }
 
-    public ArrayList<String> loadValues() throws ClassNotFoundException, SQLException {
+    public ArrayList<String> loadListValues(String tableName) throws ClassNotFoundException, SQLException {
         //LinkedList <RadioButton> startButtonList = new LinkedList<>();
         ArrayList<String> existingsTasks = new ArrayList<>();
-        String select = "SELECT * " + "FROM " + TABLE_NAME;
+        String tName = "a" + tableName;
+        tName = tName.replaceAll(" ","_");
+        String select = "SELECT * " + "FROM " + tName;
         Statement statement = getDbConnection().createStatement();
         ResultSet result = statement.executeQuery(select);
         while (result.next()) {
@@ -46,6 +52,36 @@ public class DbOperator extends DBConfig {
             existingsTasks.add(task);
         }
         return existingsTasks;
+    }
+
+    public ArrayList<String> loadListNames() throws SQLException, ClassNotFoundException {
+        ArrayList<String> existingsLists = new ArrayList<>();
+
+//        String selection = "SHOW TABLES";
+//        Statement statement = getDbConnection().createStatement();
+//        ResultSet result = statement.executeQuery(selection);
+
+        DatabaseMetaData metaData = getDbConnection().getMetaData();
+        String[] type = {"TABLE"};
+        ResultSet result = metaData.getTables(null, null, "%", type);
+        while (result.next()) {
+            String listName = result.getString("TABLE_NAME");
+            System.out.println(listName);
+            listName = listName.substring(1);
+            existingsLists.add(listName);
+        }
+        return existingsLists;
+    }
+
+    public void createList(String listName) throws SQLException, ClassNotFoundException {
+        String chengedListName = "a" + listName;
+        chengedListName = chengedListName.replaceAll(" ","_");
+        System.out.println(chengedListName);
+       // String creation = "ALTER TABLE "  + TABLE_NAME  + " ADD " + chengedListName + " TEXT";
+        String creation = "CREATE TABLE " + chengedListName + " (task TEXT);";
+        PreparedStatement preparedStatement = getDbConnection().prepareStatement(creation);
+        preparedStatement.executeUpdate();
+        getDbConnection().close();
     }
 
 }

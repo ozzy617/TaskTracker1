@@ -10,8 +10,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ControllerMain {
+
     @FXML
     private Button bt;
+
+    @FXML
+    private Button plus;
 
     public void initialize() {
         bt.setOnAction(actionEvent -> {
@@ -23,6 +27,19 @@ public class ControllerMain {
                 throw new RuntimeException(e);
             }
             Parent root = loader.getRoot();//?
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        });
+        plus.setOnAction(actionEvent -> {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("AddListWindow.fxml"));
+            try {
+                loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Parent root = loader.getRoot();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.showAndWait();
