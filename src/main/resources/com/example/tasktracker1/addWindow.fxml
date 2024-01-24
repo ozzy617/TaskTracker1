@@ -20,7 +20,7 @@
                       <Font name="American Typewriter Semibold" size="15.0" />
                   </font>
             </Button>
-            <Label layoutX="35.0" layoutY="45.0" text="Введите напомниание:">
+            <Label layoutX="35.0" layoutY="45.0" text="Введите напоминание:">
                <font>
                   <Font name="American Typewriter" size="33.0" />
                </font>

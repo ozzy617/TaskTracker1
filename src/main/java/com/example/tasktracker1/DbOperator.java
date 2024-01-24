@@ -66,7 +66,6 @@ public class DbOperator extends DBConfig {
         ResultSet result = metaData.getTables(null, null, "%", type);
         while (result.next()) {
             String listName = result.getString("TABLE_NAME");
-            System.out.println(listName);
             listName = listName.substring(1);
             existingsLists.add(listName);
         }
@@ -76,7 +75,6 @@ public class DbOperator extends DBConfig {
     public void createList(String listName) throws SQLException, ClassNotFoundException {
         String chengedListName = "a" + listName;
         chengedListName = chengedListName.replaceAll(" ","_");
-        System.out.println(chengedListName);
        // String creation = "ALTER TABLE "  + TABLE_NAME  + " ADD " + chengedListName + " TEXT";
         String creation = "CREATE TABLE " + chengedListName + " (task TEXT);";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(creation);

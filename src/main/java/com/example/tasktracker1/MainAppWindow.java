@@ -1,5 +1,7 @@
 package com.example.tasktracker1;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -8,11 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Timer;
@@ -20,24 +23,26 @@ import java.util.TimerTask;
 
 public class MainAppWindow extends Application  {
 
+    private final LinkedList<Line> linesList = new LinkedList<>();
     private AnchorPane pane;
-    private final String selectedButtonActive = "-fx-background-color: #0000CD";
-    private final String selectedButtonInactive = "-fx-background-color: #4682B4";
+    private final String selectedButtonActive = "-fx-background-color: #4169E1";
+    private final String selectedButtonInactive = "-fx-background-color: #20B2AA";
     private final ToggleGroup rButtonGroup = new ToggleGroup();
     private final ToggleGroup lButtonGroup = new ToggleGroup();
     private final LinkedList<ToggleButton> listButtons = new LinkedList<>();
     private final LinkedList<RadioButton> radioButtonList = new LinkedList<>();
-    private ArrayList<String> stringRButtonList = new ArrayList<>();
 
     private ToggleButton selectedLButton = new ToggleButton();
 
     private ArrayList<String> stringLButtonList = new ArrayList<>();
+    private ArrayList<String> stringRButtonList = new ArrayList<>();
     private int selectedButtonIndex;
     private final DbOperator dbOperator = new DbOperator();
     private final TaskButtonOperator rButtonPositionOperator = new TaskButtonOperator();
     private final ListButtonOperator listButtonPositionOperator = new ListButtonOperator();
     private ToggleButton lastSelectedButton = new ToggleButton();
-
+    private final Label tasksAmountNumb = new Label();
+    private final Label taskListName = new Label();
     @Override
     public void start(Stage stage) throws IOException, SQLException, ClassNotFoundException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainAppWindow.class.getResource("sample.fxml"));
@@ -45,6 +50,8 @@ public class MainAppWindow extends Application  {
         pane.getChildren().add(fxmlLoader.load());
 
         setupLButtons();
+        setPane();
+        setupStartList();
 
         TaskAndListNameTransporter taskTransporter = new TaskAndListNameTransporter();
         TaskHelper taskGetter = new TaskHelper();
@@ -59,32 +66,57 @@ public class MainAppWindow extends Application  {
         stage.setScene(scene);
         stage.show();
 
+
+
         rButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
                 RadioButton selectedButton =  (RadioButton) newValue;
+                setRButtonsNotActive();
+                selectedButton.setDisable(false);
+
                 String selectedButtonText  =  selectedButton.getText();
 
-                deletePickedButton(selectedButtonText,selectedButton);
-                shiftButtons();
+                selectedButton.setTextFill(Color.GRAY);
 
-                try {
-                    dbOperator.taskDeleter(selectedButtonText,selectedLButton.getText());
-                } catch (ClassNotFoundException  | SQLException e){
-                    throw new RuntimeException(e);
-                }
+                Timeline removeTime = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+                    deletePickedButton(selectedButtonText, selectedButton);
+                    shiftButtons();
+
+                    try {
+                        System.out.println(selectedLButton.getText() + " _ " + selectedButton.getText());
+                        dbOperator.taskDeleter(selectedButtonText, selectedLButton.getText());
+                    } catch (ClassNotFoundException | SQLException exception) {
+                        throw new RuntimeException(exception);
+                    }
+                    setRButtonsActive();
+                }));
+                removeTime.play();
+                selectedButton.setOnMousePressed(actionEvent -> {
+                    removeTime.stop();
+                    deleteRButtons();
+                    try {
+                        setupRButtons();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
         });
         lButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
+                listButtons.get(0).setDisable(false);
+                listButtons.get(0).setStyle(selectedButtonInactive);
+
                 selectedLButton = (ToggleButton) newValue;
-                //System.out.println(lastSelectedButton.getText() + " G5");
-                // stringRButtonList = dbOperator.loadValues();
                 lastSelectedButton.setDisable(false);
+                selectedLButton.setDisable(true);
                 lastSelectedButton.setStyle(selectedButtonInactive);
                 selectedLButton.setStyle(selectedButtonActive);
-                selectedLButton.setDisable(true);
+                selectedLButton.setOpacity(1);
                 lastSelectedButton = selectedLButton;
 
                 try {
@@ -95,40 +127,76 @@ public class MainAppWindow extends Application  {
                     throw new RuntimeException(e);
                 }
                 deleteRButtons();
-                setupRButtons();
+                try {
+                    setupRButtons();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                setTaskListName(selectedLButton.getText());
             }
         });
     }
 
     private void constructRButton(String text, int pos) {
-//        Line line = new Line();
-//        line.setStartX(150.0f);
-//        line.setStartY(140.0f);
-//        line.setEndX(450.0f);    <---- ЛИНИИИ!!!
-//        line.setEndY(140.0f);
-//        pane.getChildren().add(line);
-        //ПОФИКСИТЬ БАГ БЛЯТЬ ОЧЕРЕДНОЙ С ПРОБЕЛАМИ
         RadioButton rButton = rButtonPositionOperator.designButton(text, pos);
         pane.getChildren().add(rButton);
         radioButtonList.add(rButton);
         rButton.setToggleGroup(rButtonGroup);
-        //rButton.isArmed();
+        deleteAllLines();
+        constructLines(radioButtonList.size());
     }
 
+    private void constructLines(int linesCounter) {
+        int c = 66;
+        Line separateLine = new Line();
+        separateLine.setStroke(Color.LIGHTGREY);
+        separateLine.setStartX(615);
+        separateLine.setStartY(0);
+        separateLine.setEndX(615);
+        separateLine.setEndY(c);
+        pane.getChildren().add(separateLine);
+        for (int  i = 0; i < linesCounter + 1; i++) {
+            Line line = rButtonPositionOperator.designLine(c);
+            pane.getChildren().add(line);
+            linesList.add(line);
+            c += 28;
+        }
+    }
+
+    private void deleteAllLines() {
+        for (int i = 0; i < linesList.size(); i++) {
+            pane.getChildren().remove(linesList.get(i));
+        }
+    }
+
+    private void setRButtonsNotActive() {
+        for (RadioButton s : radioButtonList) {
+            s.setDisable(true);
+            s.setOpacity(1);
+        }
+    }
+    private void setRButtonsActive() {
+        for (RadioButton s : radioButtonList) {
+            s.setDisable(false);
+        }
+    }
     private void deleteRButtons(){
         for (int i = 0; i < radioButtonList.size(); i++) {
-            RadioButton button = radioButtonList.get(i);
             pane.getChildren().remove(radioButtonList.get(i));
         }
-        rButtonPositionOperator.setActualPosition(42);
+        rButtonPositionOperator.setActualPosition(70);
         radioButtonList.clear();
     }
 
     private void constructLButton(String text, int pos) {
         ToggleButton listButton = listButtonPositionOperator.designButton(text,pos);
+
         pane.getChildren().add(listButton);
         listButtons.add(listButton);
         listButton.setToggleGroup(lButtonGroup);
+
 
     }
 
@@ -143,13 +211,39 @@ public class MainAppWindow extends Application  {
                 break;
             }
         }
+        setTaskCountLabel();
     }
-    private void setupRButtons(){
+    private void setPane() {
+        pane.getChildren().add(tasksAmountNumb);
+        pane.getChildren().add(taskListName);
+    }
+    private void setTaskCountLabel() {
+        rButtonPositionOperator.countTasks(radioButtonList.size(), tasksAmountNumb);
+    }
+    private void setTaskListName(String text) {
+        rButtonPositionOperator.writeListName(text, taskListName);
+    }
+
+    private void setupStartList() throws SQLException, ClassNotFoundException {
+        selectedLButton = listButtons.get(0);
+        stringRButtonList = dbOperator.loadListValues(stringLButtonList.get(0));
+        setTaskListName(stringLButtonList.get(0));
+        setupRButtons();
+        listButtons.get(0).setDisable(true);
+        listButtons.get(0).setStyle(selectedButtonActive);
+        listButtons.get(0).setOpacity(1);
+    }
+
+    private void setupRButtons() throws SQLException, ClassNotFoundException {
+        deleteAllLines();
+        stringRButtonList = dbOperator.loadListValues(selectedLButton.getText());
         for (String s : stringRButtonList) {
             int actualPosition = rButtonPositionOperator.getActualPosition();
             constructRButton(s,actualPosition);
             rButtonPositionOperator.actualPositionChanger();
         }
+        constructLines(radioButtonList.size());
+        setTaskCountLabel();
     }
     private void setupLButtons() throws SQLException, ClassNotFoundException {
         stringLButtonList = dbOperator.loadListNames();
@@ -180,7 +274,7 @@ public class MainAppWindow extends Application  {
             }
         };
         Timer timer1 = new Timer();
-        long delay = 203L;
+        long delay = 202L;
         timer1.schedule(task1, delay);
         TimerTask task2 = new TimerTask() {
             public void run() {
@@ -194,8 +288,10 @@ public class MainAppWindow extends Application  {
             }
         };
         Timer timer2 = new Timer();
-        long delay3 = 210L;
+        long delay3 = 205L;
         timer2.schedule(task2,delay3);
+        deleteAllLines();
+        constructLines(radioButtonList.size());
     }
 
     public class TaskHelper implements TaskAndListListener {
@@ -215,6 +311,7 @@ public class MainAppWindow extends Application  {
                     throw new RuntimeException(e);
                 }
             }
+            setTaskCountLabel();
         }
     }
 
@@ -227,18 +324,7 @@ public class MainAppWindow extends Application  {
             int actualPos = listButtonPositionOperator.getActualPosition();
             constructLButton(listName,actualPos);
             listButtonPositionOperator.actualPositionChanger();
-
+            setTaskCountLabel();
         }
     }
-
-    public class AnimListener implements TaskAndListListener {
-
-
-        @Override
-        public void getStringText(String text) {
-            rButtonPositionOperator.setActualPosition(42);
-            setupRButtons();
-        }
-    }
-
 }

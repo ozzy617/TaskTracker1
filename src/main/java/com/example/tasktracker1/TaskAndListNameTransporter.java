@@ -18,7 +18,6 @@ public class TaskAndListNameTransporter {
         listNameListener.getStringText(listName);
     }
     public void getTask(String task) {
-//        task = task1;
         taskListener.getStringText(task);
     }
 }

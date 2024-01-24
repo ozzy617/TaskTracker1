@@ -1,6 +1,7 @@
 package com.example.tasktracker1;
 
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
@@ -31,6 +32,14 @@ public class AddListController {
                 }
             }
             applyListButton.getScene().getWindow().hide();
+        });
+        applyListButton.setOnMouseEntered(e -> {
+            applyListButton.setCursor(Cursor.HAND);
+            applyListButton.setStyle("-fx-background-color: #4682B4;");
+        });
+        applyListButton.setOnMouseExited(e -> {
+            applyListButton.setCursor(Cursor.DEFAULT);
+            applyListButton.setStyle("-fx-background-color: #008080;");
         });
     }
 }
