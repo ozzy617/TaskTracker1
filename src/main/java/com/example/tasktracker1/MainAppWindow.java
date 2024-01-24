@@ -274,8 +274,8 @@ public class MainAppWindow extends Application  {
             }
         };
         Timer timer1 = new Timer();
-        long delay = 202L;
-        timer1.schedule(task1, delay);
+        long delay1 = 202L;
+        timer1.schedule(task1, delay1);
         TimerTask task2 = new TimerTask() {
             public void run() {
                 for (int i = selectedButtonIndex; i < radioButtonList.size(); i++) {
@@ -288,7 +288,7 @@ public class MainAppWindow extends Application  {
             }
         };
         Timer timer2 = new Timer();
-        long delay3 = 205L;
+        long delay3 = 204L;
         timer2.schedule(task2,delay3);
         deleteAllLines();
         constructLines(radioButtonList.size());
