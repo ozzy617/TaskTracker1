@@ -13,7 +13,7 @@ import java.io.IOException;
 public class ControllerMain {
 
     @FXML
-    private Button bt;
+    private Button bt = new Button();
 
     @FXML
     private Button plus;
@@ -28,7 +28,7 @@ public class ControllerMain {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            Parent root = loader.getRoot();//?
+            Parent root = loader.getRoot();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.showAndWait();
@@ -63,7 +63,5 @@ public class ControllerMain {
             plus.setStyle("-fx-background-color: transparent;");
         });
     }
-    public Button activateButton() {
-        return bt;
-    }
+
 }

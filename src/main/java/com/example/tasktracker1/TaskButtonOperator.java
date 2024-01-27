@@ -29,7 +29,31 @@ public class TaskButtonOperator {
         });
         return radioButton;
     }
-
+    public Line designLine(int linePos) {
+        Line line = new Line();
+        line.setStroke(Color.LIGHTGREY);
+        line.setStartX(286);
+        line.setStartY(linePos);
+        line.setEndX(750);
+        line.setEndY(linePos);
+        return line;
+    }
+    public void countTasks(int rButtonListSize, Label label) {
+        Label tasksAmountNumb = label;
+        String tasksAmount = String.valueOf(rButtonListSize);
+        tasksAmountNumb.setText(tasksAmount);
+        tasksAmountNumb.setLayoutX(590);
+        tasksAmountNumb.setLayoutY(16);
+        tasksAmountNumb.setFont(Font.font(MAIN_FONT,28));
+    }
+    public Label writeListName(String strListName, Label label) {
+        Label listNameLabel = label;
+        listNameLabel.setText(strListName);
+        listNameLabel.setLayoutX(300);
+        listNameLabel.setLayoutY(16);
+        listNameLabel.setFont(Font.font(MAIN_FONT,28));
+        return listNameLabel;
+    }
     public void setActualPosition(int pos) {
         INITIAL_BUTTON_POS = pos;
     }
@@ -40,32 +64,5 @@ public class TaskButtonOperator {
 
     public void actualPositionChanger() {
         INITIAL_BUTTON_POS += BUTTONS_OFFSET;
-    }
-
-    public Line designLine(int linePos) {
-        Line line = new Line();
-        line.setStroke(Color.LIGHTGREY);
-        line.setStartX(286);
-        line.setStartY(linePos);
-        line.setEndX(750);
-        line.setEndY(linePos);
-        return line;
-    }
-    public Label countTasks(int rButtonListSize, Label label) {
-        Label tasksAmountNumb = label;
-        String tasksAmount = String.valueOf(rButtonListSize);
-        tasksAmountNumb.setText(tasksAmount);
-        tasksAmountNumb.setLayoutX(590);
-        tasksAmountNumb.setLayoutY(16);
-        tasksAmountNumb.setFont(Font.font(MAIN_FONT,28));
-        return tasksAmountNumb;
-    }
-    public Label writeListName(String strListName, Label label) {
-        Label listNameLabel = label;
-        listNameLabel.setText(strListName);
-        listNameLabel.setLayoutX(300);
-        listNameLabel.setLayoutY(16);
-        listNameLabel.setFont(Font.font(MAIN_FONT,28));
-        return listNameLabel;
     }
 }
