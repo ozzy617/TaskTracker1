@@ -217,7 +217,7 @@ public class MainAppWindow extends Application  {
         for (int i = 0; i < radioButtonList.size(); i++) {
             pane.getChildren().remove(radioButtonList.get(i));
         }
-        rButtonPositionOperator.setActualPosition(70);
+        rButtonPositionOperator.setActualPosition(StyleHelper.TASK_BUTTON_INITIAL_POSITION);
         radioButtonList.clear();
     }
 
@@ -279,12 +279,12 @@ public class MainAppWindow extends Application  {
 
     private void setupRButtons() throws SQLException, ClassNotFoundException {
         deleteAllLines();
-        rButtonPositionOperator.setActualPosition(70);
+        rButtonPositionOperator.setActualPosition(StyleHelper.TASK_BUTTON_INITIAL_POSITION);
         stringRButtonList = dbOperator.loadListValues(selectedLButton.getText());
         for (String s : stringRButtonList) {
             int actualPosition = rButtonPositionOperator.getActualPosition();
             constructRButton(s,actualPosition);
-            rButtonPositionOperator.actualPositionChanger();
+            rButtonPositionOperator.changeActualPosition();
         }
         constructLines(radioButtonList.size());
         setTaskCountLabel();
@@ -326,7 +326,7 @@ public class MainAppWindow extends Application  {
         }
         radioButtonList.clear();
         stringRButtonList.clear();
-        listButtonPositionOperator.setActualPosition(42);
+        listButtonPositionOperator.setActualPosition(StyleHelper.LIST_BUTTON_INITIAL_POSITION);
     }
     private void setupLButtons() throws SQLException, ClassNotFoundException {
         stringLButtonList = dbOperator.loadListNames();
@@ -356,7 +356,7 @@ public class MainAppWindow extends Application  {
             public void run() {
                 for (int i = selectedButtonIndex; i < radioButtonList.size(); i++){
                     RadioButton button = radioButtonList.get(i);
-                    BackwardAnim backwardAniman = new BackwardAnim(button,rButtonPositionOperator.getActualPosition());
+                    BackwardAnim backwardAniman = new BackwardAnim(button);
                     backwardAniman.playAnim();
                 }
             }
@@ -388,13 +388,13 @@ public class MainAppWindow extends Application  {
         public void getStringText(String text) {
             DbOperator taskAdder = new DbOperator();
             StringOperator lineOperator = new StringOperator();
-            if (lineOperator.chekStrexistance(text)) {
+            if (lineOperator.checkStrExistance(text)) {
                 try {
                     taskAdder.writeTask(text, selectedLButton.getText());
                     String task = text;
                     int actualPos = rButtonPositionOperator.getActualPosition();
                     constructRButton(task,actualPos);
-                    rButtonPositionOperator.actualPositionChanger();
+                    rButtonPositionOperator.changeActualPosition();
                 } catch (ClassNotFoundException | SQLException e) {
                     throw new RuntimeException(e);
                 }

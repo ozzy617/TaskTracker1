@@ -7,14 +7,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class ListButtonOperator {
-    private final static String MAIN_FONT = "American Typewriter Semibold";
-    private static int INITIAL_BUTTON_POS = 42;
+
+    private int initialButtonPos = StyleHelper.LIST_BUTTON_INITIAL_POSITION;
     private final static int BUTTONS_OFFSET = 40;
 
     public ToggleButton designButton(String text, int pos) {
-
         ToggleButton button = new ToggleButton(text);
-        button.setFont(Font.font(MAIN_FONT,15));
+        button.setFont(Font.font(StyleHelper.MAIN_FONT, 15));
         button.setTextFill(Color.WHITE);
         button.setStyle("-fx-background-color: #20B2AA");
         button.setOnMouseEntered(e -> {
@@ -34,17 +33,19 @@ public class ListButtonOperator {
         button.setPrefHeight(12);//40
         return button;
     }
+
     public Label designTasksAmount(String tasksAmount, int position) {
         Label taskCounter = new Label(tasksAmount);
         taskCounter.setLayoutX(220);
-        taskCounter.setLayoutY(position+5);
+        taskCounter.setLayoutY(position + 5);
         taskCounter.setTextFill(Color.LIGHTGREY);
-        taskCounter.setFont(Font.font(MAIN_FONT,14));
+        taskCounter.setFont(Font.font(StyleHelper.MAIN_FONT, 14));
         return taskCounter;
     }
+
     public ToggleButton designDeleteListButton(int position) {
         ToggleButton toggleButton = new ToggleButton("×");
-        toggleButton.setStyle("-fx-background-color: transparent;");
+        toggleButton.setStyle(StyleHelper.TRANSPARENT_STYLE);
         toggleButton.setTextFill(Color.LIGHTGREY);
         toggleButton.setPrefHeight(2);
         toggleButton.setPrefWidth(2);
@@ -58,21 +59,22 @@ public class ListButtonOperator {
         });
         toggleButton.setOnMouseExited(e -> {
             toggleButton.setCursor(Cursor.DEFAULT);
-            toggleButton.setStyle("-fx-background-color: transparent;");
+            toggleButton.setStyle(StyleHelper.TRANSPARENT_STYLE);
             toggleButton.setOpacity(1);
             toggleButton.setTextFill(Color.LIGHTGREY);
         });
         return toggleButton;
     }
+
     public void setActualPosition(int pos) {
-        INITIAL_BUTTON_POS = pos;
+        initialButtonPos = pos;
     }
 
     public int getActualPosition() {
-        return INITIAL_BUTTON_POS;
+        return initialButtonPos;
     }
 
     public void actualPositionChanger() {
-        INITIAL_BUTTON_POS += BUTTONS_OFFSET;
+        initialButtonPos += BUTTONS_OFFSET;
     }
 }
