@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainAppWindow extends Application  {
+public class MainAppWindow extends Application {
 
     private final LinkedList<Line> linesList = new LinkedList<>();
     private AnchorPane pane;
@@ -72,7 +72,6 @@ public class MainAppWindow extends Application  {
         stage.setScene(scene);
         stage.show();
 
-
         rButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
@@ -107,6 +106,7 @@ public class MainAppWindow extends Application  {
                 });
             }
         });
+
         lButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
@@ -152,13 +152,14 @@ public class MainAppWindow extends Application  {
                             dbOperator.deleteTable(stringLButtonList.get(i));
                             deleteLButtons();
                             setupLButtons();
-                        } catch (SQLException | RuntimeException | ClassNotFoundException e) {
+                        } catch (SQLException | ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }
                         break;
                     }
                 }
-                if (stringLButtonList.size() == 0) {
+
+                if (stringLButtonList.isEmpty()) {
                     addButton.setDisable(true);
                     deleteAllLines();
                     deleteListInfo();
@@ -196,9 +197,8 @@ public class MainAppWindow extends Application  {
     }
 
     private void deleteAllLines() {
-
-        for (int i = 0; i < linesList.size(); i++) {
-            pane.getChildren().remove(linesList.get(i));
+        for (Line line : linesList) {
+            pane.getChildren().remove(line);
         }
     }
 
@@ -208,14 +208,16 @@ public class MainAppWindow extends Application  {
             s.setOpacity(1);
         }
     }
+
     private void setRButtonsActive() {
         for (RadioButton s : radioButtonList) {
             s.setDisable(false);
         }
     }
+
     private void deleteRButtons(){
-        for (int i = 0; i < radioButtonList.size(); i++) {
-            pane.getChildren().remove(radioButtonList.get(i));
+        for (RadioButton radioButton : radioButtonList) {
+            pane.getChildren().remove(radioButton);
         }
         rButtonPositionOperator.setActualPosition(StyleHelper.TASK_BUTTON_INITIAL_POSITION);
         radioButtonList.clear();
@@ -229,7 +231,7 @@ public class MainAppWindow extends Application  {
     }
 
     private void deletePickedButton(String selectedButtonText, RadioButton selectedButton) throws SQLException, ClassNotFoundException {
-        for (int i = 0; i < radioButtonList.size(); i++){
+        for (int i = 0; i < radioButtonList.size(); i++) {
             String equalButtonText = radioButtonList.get(i).getText();
             if (selectedButtonText.equals(equalButtonText)){
                 pane.getChildren().remove(radioButtonList.get(i));
@@ -289,6 +291,7 @@ public class MainAppWindow extends Application  {
         constructLines(radioButtonList.size());
         setTaskCountLabel();
     }
+
     private void constructTaskSumLabels() throws SQLException, ClassNotFoundException {
         ArrayList<String> stringCountTaskList = dbOperator.countRows(stringLButtonList);
         for (Label s : tasksAmountList) {
@@ -301,6 +304,7 @@ public class MainAppWindow extends Application  {
             pane.getChildren().add(label);
         }
     }
+
     private void setupDeleteListButtons() {
         for (ToggleButton s : deleteListButtonsArray) {
             pane.getChildren().remove(s);
@@ -313,6 +317,7 @@ public class MainAppWindow extends Application  {
             deleteListButtonsArray.add(deleteButton);
         }
     }
+
     private void deleteLButtons() {
         for (int i = 0; i < listButtons.size(); i++) {
             pane.getChildren().remove(listButtons.get(i));
@@ -321,13 +326,14 @@ public class MainAppWindow extends Application  {
         deleteListButtonsArray.clear();
         listButtons.clear();
         stringLButtonList.clear();
-        for (int i = 0; i < radioButtonList.size(); i++) {
-            pane.getChildren().remove(radioButtonList.get(i));
+        for (RadioButton radioButton : radioButtonList) {
+            pane.getChildren().remove(radioButton);
         }
         radioButtonList.clear();
         stringRButtonList.clear();
         listButtonPositionOperator.setActualPosition(StyleHelper.LIST_BUTTON_INITIAL_POSITION);
     }
+
     private void setupLButtons() throws SQLException, ClassNotFoundException {
         stringLButtonList = dbOperator.loadListNames();
         for (String s : stringLButtonList) {
@@ -345,7 +351,6 @@ public class MainAppWindow extends Application  {
     }
 
     private void shiftButtons() {
-
         for (int i = selectedButtonIndex; i < radioButtonList.size(); i++) {
             RadioButton button = radioButtonList.get(i);
             ChangePositionAnimation anim = new ChangePositionAnimation(button);
@@ -354,13 +359,14 @@ public class MainAppWindow extends Application  {
 
         TimerTask task1 = new TimerTask() {
             public void run() {
-                for (int i = selectedButtonIndex; i < radioButtonList.size(); i++){
+                for (int i = selectedButtonIndex; i < radioButtonList.size(); i++) {
                     RadioButton button = radioButtonList.get(i);
                     BackwardAnim backwardAniman = new BackwardAnim(button);
                     backwardAniman.playAnim();
                 }
             }
         };
+
         Timer timer1 = new Timer();
         long delay1 = 202L;
         timer1.schedule(task1, delay1);
@@ -377,7 +383,7 @@ public class MainAppWindow extends Application  {
         };
         Timer timer2 = new Timer();
         long delay3 = 204L;
-        timer2.schedule(task2,delay3);
+        timer2.schedule(task2, delay3);
         deleteAllLines();
         constructLines(radioButtonList.size());
     }
@@ -391,9 +397,8 @@ public class MainAppWindow extends Application  {
             if (lineOperator.checkStrExistance(text)) {
                 try {
                     taskAdder.writeTask(text, selectedLButton.getText());
-                    String task = text;
                     int actualPos = rButtonPositionOperator.getActualPosition();
-                    constructRButton(task,actualPos);
+                    constructRButton(text,actualPos);
                     rButtonPositionOperator.changeActualPosition();
                 } catch (ClassNotFoundException | SQLException e) {
                     throw new RuntimeException(e);
@@ -402,22 +407,20 @@ public class MainAppWindow extends Application  {
             setTaskCountLabel();
             try {
                 constructTaskSumLabels();
-            } catch (SQLException | ClassNotFoundException e){
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public class ListNameHelper implements TaskAndListListener {
-
+    class ListNameHelper implements TaskAndListListener {
         @Override
         public void getStringText(String text) {
-            String listName = text;
             int actualPos = listButtonPositionOperator.getActualPosition();
-            constructLButton(listName,actualPos);
+            constructLButton(text,actualPos);
             listButtonPositionOperator.actualPositionChanger();
             setTaskCountLabel();
-            stringLButtonList.add(listName);
+            stringLButtonList.add(text);
             try {
                 constructTaskSumLabels();
             } catch (SQLException | ClassNotFoundException e) {
