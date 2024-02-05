@@ -20,48 +20,31 @@ public class ControllerMain {
 
     public void initialize() {
         bt.fire();
-        bt.setOnAction(actionEvent -> {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("addWindow.fxml"));
-            try {
-                loader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Parent root = loader.getRoot();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-        });
-        bt.setOnMouseEntered(e -> {
-            bt.setCursor(Cursor.HAND);
-            bt.setStyle("-fx-background-color: #4682B4;");
-        });
-        bt.setOnMouseExited(e -> {
-            bt.setCursor(Cursor.DEFAULT);
-            bt.setStyle("-fx-background-color: #008080;");
-        });
-        plus.setOnAction(actionEvent -> {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("AddListWindow.fxml"));
-            try {
-                loader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Parent root = loader.getRoot();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-        });
+        bt.setOnAction(actionEvent -> setOnAction("addWindow.fxml"));
+        StyleHelper.styleButton(bt);
+
+        plus.setOnAction(actionEvent -> setOnAction("AddListWindow.fxml"));
         plus.setOnMouseEntered(e -> {
             plus.setCursor(Cursor.HAND);
             plus.setStyle("-fx-background-color: #DCDCDC;");
         });
         plus.setOnMouseExited(e -> {
             plus.setCursor(Cursor.DEFAULT);
-            plus.setStyle("-fx-background-color: transparent;");
+            plus.setStyle(StyleHelper.TRANSPARENT_STYLE);
         });
     }
 
+    private void setOnAction(String resourceName) {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource(resourceName));
+        try {
+                loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Parent root = loader.getRoot();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+    }
 }

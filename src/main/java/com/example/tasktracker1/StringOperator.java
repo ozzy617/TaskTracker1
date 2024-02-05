@@ -1,12 +1,8 @@
 package com.example.tasktracker1;
 
 public class StringOperator {
-    public boolean chekStrexistance(String taskStr) { // СДЕЛАТЬ ИНТЕРФЕЙСОМ ИЛИ НЕТ
+    public boolean chekStrExistance(String taskStr) {
         String string = taskStr.replaceAll(" ", "");
-        if (string.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+        return !string.isEmpty();
     }
 }

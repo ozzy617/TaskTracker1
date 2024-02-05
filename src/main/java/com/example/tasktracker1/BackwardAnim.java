@@ -5,19 +5,16 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 
 public class BackwardAnim {
-    private TranslateTransition tt;
-    private Node node;
-    private int p;
+    private TranslateTransition translateTransition;
 
-    public BackwardAnim(Node node, int pos){
-        tt = new TranslateTransition(Duration.millis(1),node);
-        tt.setFromY(0f);
-        tt.setByY(0f);
-        tt.setCycleCount(1);
+    public BackwardAnim(Node node){
+        translateTransition = new TranslateTransition(Duration.millis(1),node);
+        translateTransition.setFromY(0f);
+        translateTransition.setByY(0f);
+        translateTransition.setCycleCount(1);
     }
 
-
     public void playAnim() {
-        tt.playFromStart();
+        translateTransition.playFromStart();
     }
 }

@@ -11,6 +11,7 @@ public class AddController {
 
     @FXML
     private Button applyButton;
+
     @FXML
     private TextField textTask;
 
@@ -21,13 +22,6 @@ public class AddController {
             transporter.getTask(task);
             applyButton.getScene().getWindow().hide();
         });
-        applyButton.setOnMouseEntered(e -> {
-            applyButton.setCursor(Cursor.HAND);
-            applyButton.setStyle("-fx-background-color: #4682B4;");
-        });
-        applyButton.setOnMouseExited(e -> {
-            applyButton.setCursor(Cursor.DEFAULT);
-            applyButton.setStyle("-fx-background-color: #008080;");
-        });
+        StyleHelper.styleButton(applyButton);
     }
 }
