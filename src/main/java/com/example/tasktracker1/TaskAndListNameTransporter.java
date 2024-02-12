@@ -1,7 +1,7 @@
 package com.example.tasktracker1;
 
 public class TaskAndListNameTransporter {
-    private static String task;
+
     private static TaskAndListListener taskListener;
 
     private static TaskAndListListener listNameListener;
@@ -17,6 +17,7 @@ public class TaskAndListNameTransporter {
     public void getListName(String listName) {
         listNameListener.getStringText(listName);
     }
+    
     public void getTask(String task) {
         taskListener.getStringText(task);
     }

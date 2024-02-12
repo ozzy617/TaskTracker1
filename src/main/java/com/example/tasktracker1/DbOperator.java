@@ -13,8 +13,9 @@ public class DbOperator extends DBConfig {
         Class.forName("org.postgresql.Driver");
         Properties auth = new Properties();
         auth.put("user", dbUser);
-        auth.put("password", dbPass);DriverManager.getConnection(connectionString,auth);
-        return DriverManager.getConnection(connectionString,auth);
+        auth.put("password", dbPass);
+        DriverManager.getConnection(connectionString, auth);
+        return DriverManager.getConnection(connectionString, auth);
     }
 
     public void writeTask(String task, String tableName) throws SQLException, ClassNotFoundException {
@@ -36,7 +37,7 @@ public class DbOperator extends DBConfig {
 
     public ArrayList<String> loadListValues(String tableName) throws ClassNotFoundException, SQLException {
         ArrayList<String> existingsTasks = new ArrayList<>();
-       tableName = changeNameForm(tableName);
+        tableName = changeNameForm(tableName);
         String select = "SELECT * " + "FROM " + tableName;
         Statement statement = getDbConnection().createStatement();
         ResultSet result = statement.executeQuery(select);
@@ -59,12 +60,12 @@ public class DbOperator extends DBConfig {
         }
         return rowsSum;
     }
+
     public void deleteTable(String tableName) throws SQLException, ClassNotFoundException {
         tableName = changeNameForm(tableName);
         String delete = "DROP TABLE " + tableName;
         Statement statement = getDbConnection().createStatement();
         statement.executeUpdate(delete);
-
     }
 
     public ArrayList<String> loadListNames() throws SQLException, ClassNotFoundException {
@@ -81,16 +82,16 @@ public class DbOperator extends DBConfig {
     }
 
     public void createList(String listName) throws SQLException, ClassNotFoundException {
-         listName = changeNameForm(listName);
-        String creation = "CREATE TABLE " + listName + " (task TEXT);";
-        PreparedStatement preparedStatement = getDbConnection().prepareStatement(creation);
+        listName = changeNameForm(listName);
+        String create = "CREATE TABLE " + listName + " (task TEXT);";
+        PreparedStatement preparedStatement = getDbConnection().prepareStatement(create);
         preparedStatement.executeUpdate();
         getDbConnection().close();
     }
+
     private String changeNameForm(String tName) {
         tName = "a" + tName;
         tName = tName.replaceAll(" ","_");
         return tName;
     }
-
 }

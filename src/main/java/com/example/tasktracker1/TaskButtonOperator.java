@@ -8,27 +8,24 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 
 public class TaskButtonOperator {
-    private final static String MAIN_FONT = "American Typewriter Semibold";
-    private static int INITIAL_BUTTON_POS = 70;
+
+    private int initialButtonPos = StyleHelper.TASK_BUTTON_INITIAL_POSITION;
     private final static int BUTTONS_OFFSET = 28;
 
     public RadioButton designButton(String text, int pos) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setStyle("-fx-mark-color:  blue;");
-        radioButton.setFont(Font.font(MAIN_FONT,15));
+        radioButton.setFont(Font.font(StyleHelper.MAIN_FONT, 15));
         radioButton.setTextFill(Color.BLACK);
         radioButton.setLayoutX(290);
         radioButton.setLayoutY(pos);
         radioButton.setPrefWidth(437);
         radioButton.setPrefHeight(20);
-        radioButton.setOnMouseEntered(e -> {
-            radioButton.setCursor(Cursor.HAND);
-        });
-        radioButton.setOnMouseExited(e -> {
-            radioButton.setCursor(Cursor.DEFAULT);
-        });
+        radioButton.setOnMouseEntered(e -> radioButton.setCursor(Cursor.HAND));
+        radioButton.setOnMouseExited(e -> radioButton.setCursor(Cursor.DEFAULT));
         return radioButton;
     }
+
     public Line designLine(int linePos) {
         Line line = new Line();
         line.setStroke(Color.LIGHTGREY);
@@ -38,31 +35,31 @@ public class TaskButtonOperator {
         line.setEndY(linePos);
         return line;
     }
+
     public void countTasks(int rButtonListSize, Label label) {
-        Label tasksAmountNumb = label;
         String tasksAmount = String.valueOf(rButtonListSize);
-        tasksAmountNumb.setText(tasksAmount);
-        tasksAmountNumb.setLayoutX(590);
-        tasksAmountNumb.setLayoutY(16);
-        tasksAmountNumb.setFont(Font.font(MAIN_FONT,28));
+        label.setText(tasksAmount);
+        label.setLayoutX(590);
+        label.setLayoutY(16);
+        label.setFont(Font.font(StyleHelper.MAIN_FONT, 28));
     }
-    public Label writeListName(String strListName, Label label) {
-        Label listNameLabel = label;
-        listNameLabel.setText(strListName);
-        listNameLabel.setLayoutX(300);
-        listNameLabel.setLayoutY(16);
-        listNameLabel.setFont(Font.font(MAIN_FONT,28));
-        return listNameLabel;
+
+    public void writeListName(String strListName, Label label) {
+        label.setText(strListName);
+        label.setLayoutX(300);
+        label.setLayoutY(16);
+        label.setFont(Font.font(StyleHelper.MAIN_FONT, 28));
     }
+
     public void setActualPosition(int pos) {
-        INITIAL_BUTTON_POS = pos;
+        initialButtonPos = pos;
     }
 
     public int getActualPosition() {
-        return INITIAL_BUTTON_POS;
+        return initialButtonPos;
     }
 
-    public void actualPositionChanger() {
-        INITIAL_BUTTON_POS += BUTTONS_OFFSET;
+    public void changeActualPosition() {
+        initialButtonPos += BUTTONS_OFFSET;
     }
 }
