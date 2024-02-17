@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class ListButtonOperator {
-
     private int  initialButtonPos = StyleHelper.LIST_BUTTON_INITIAL_POSITION;
     private final static int BUTTONS_OFFSET = 40;
 

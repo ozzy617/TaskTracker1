@@ -23,7 +23,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainAppWindow extends Application  {
-
     private final LinkedList<Line> linesList = new LinkedList<>();
     private AnchorPane pane;
     private final String selectedButtonActive = "-fx-background-color: #4169E1";
@@ -46,7 +45,8 @@ public class MainAppWindow extends Application  {
     private final ToggleGroup deleteListButtonsGroup = new ToggleGroup();
     private final ArrayList<ToggleButton> deleteListButtonsArray = new ArrayList<>();
     private Button addButton;
-
+    private RadioButton selectedRButton = new RadioButton();
+    Timeline removeTime = new Timeline();
     @Override
     public void start(Stage stage) throws IOException, SQLException, ClassNotFoundException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainAppWindow.class.getResource("sample.fxml"));
@@ -70,23 +70,22 @@ public class MainAppWindow extends Application  {
         Scene scene = new Scene(pane, 750, 650);
         stage.setTitle("TaskTracker");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
 
 
         rButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
-                RadioButton selectedButton =  (RadioButton) newValue;
+                selectedRButton =  (RadioButton) newValue;
                 setRButtonsNotActive();
-                selectedButton.setDisable(false);
+                selectedRButton.setDisable(false);
+                String selectedButtonText  =  selectedRButton.getText();
+                selectedRButton.setTextFill(Color.GRAY);
 
-                String selectedButtonText  =  selectedButton.getText();
-
-                selectedButton.setTextFill(Color.GRAY);
-
-                Timeline removeTime = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+                removeTime = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
                     try {
-                        deletePickedButton(selectedButtonText, selectedButton);
+                        deletePickedButton(selectedButtonText, selectedRButton);
                         shiftButtons();
                         dbOperator.deleteTask(selectedButtonText, selectedLButton.getText());
                         setRButtonsActive();
@@ -96,7 +95,7 @@ public class MainAppWindow extends Application  {
                     }
                 }));
                 removeTime.play();
-                selectedButton.setOnMousePressed(actionEvent -> {
+                selectedRButton.setOnMousePressed(actionEvent -> {
                     removeTime.stop();
                     deleteRButtons();
                     try {
@@ -112,7 +111,13 @@ public class MainAppWindow extends Application  {
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
                 listButtons.get(0).setDisable(false);
                 listButtons.get(0).setStyle(selectedButtonInactive);
-
+                try {
+                    removeTime.stop();
+                    dbOperator.deleteTask(selectedRButton.getText(), selectedLButton.getText());
+                    constructTaskSumLabels();
+                } catch (SQLException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
                 selectedLButton = (ToggleButton) newValue;
                 lastSelectedButton.setDisable(false);
                 selectedLButton.setDisable(true);
@@ -129,6 +134,7 @@ public class MainAppWindow extends Application  {
                     throw new RuntimeException(e);
                 }
                 setTaskListName(selectedLButton.getText());
+
             }
         });
 
@@ -424,6 +430,7 @@ public class MainAppWindow extends Application  {
                 throw new RuntimeException(e);
             }
             if (listButtons.size() == 1) {
+                selectedLButton = listButtons.get(0);
                 listButtons.get(0).fire();
                 setTaskListName(text);
                 setTaskCountLabel();

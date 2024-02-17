@@ -23,8 +23,8 @@ public class DbOperator extends DBConfig {
         String insert = "INSERT INTO " + tableName +"(" + COLUMN_NAME + ")" + "VALUES(?)";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(insert);
         preparedStatement.setString(1, task);
-        getDbConnection().close();
         preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
     public void deleteTask(String task, String tableName) throws ClassNotFoundException, SQLException {
@@ -32,7 +32,7 @@ public class DbOperator extends DBConfig {
         String delete = "DELETE FROM " + tableName + " WHERE " + COLUMN_NAME + " = "  + "'" + task + "'" + ";";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(delete);
         preparedStatement.executeUpdate();
-        getDbConnection().close();
+        preparedStatement.close();
     }
 
     public ArrayList<String> loadListValues(String tableName) throws ClassNotFoundException, SQLException {
@@ -45,20 +45,22 @@ public class DbOperator extends DBConfig {
             String task = result.getString(COLUMN_NAME);
             existingsTasks.add(task);
         }
+        statement.close();
         return existingsTasks;
     }
 
     public ArrayList<String> countRows(ArrayList<String> tableNames) throws SQLException, ClassNotFoundException {
         ArrayList<String> rowsSum = new ArrayList<>();
+        Statement statement = getDbConnection().createStatement();
         for (String s : tableNames) {
             s = changeNameForm(s);
             String select = "SELECT COUNT(*) FROM " + s + ";";
-            Statement statement = getDbConnection().createStatement();
             ResultSet set = statement.executeQuery(select);
             set.next();
             String res = set.getString(1);
             rowsSum.add(res);
         }
+        statement.close();
         return rowsSum;
     }
 
@@ -67,7 +69,7 @@ public class DbOperator extends DBConfig {
         String delete = "DROP TABLE " + tableName;
         Statement statement = getDbConnection().createStatement();
         statement.executeUpdate(delete);
-
+        statement.close();
     }
 
     public ArrayList<String> loadListNames() throws SQLException, ClassNotFoundException {
@@ -80,6 +82,7 @@ public class DbOperator extends DBConfig {
             listName = listName.substring(1);
             existingsLists.add(listName);
         }
+        getDbConnection().close();
         return existingsLists;
     }
 
@@ -88,7 +91,7 @@ public class DbOperator extends DBConfig {
         String create = "CREATE TABLE " + listName + " (task TEXT);";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(create);
         preparedStatement.executeUpdate();
-        getDbConnection().close();
+        preparedStatement.close();
     }
 
     private String changeNameForm(String tName) {

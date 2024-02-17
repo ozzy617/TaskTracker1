@@ -1,11 +1,10 @@
 package com.example.tasktracker1;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
-import java.sql.SQLException;
+import javafx.scene.input.KeyCode;
 
 public class AddController {
 
@@ -16,6 +15,14 @@ public class AddController {
     private TextField textTask;
 
     public void initialize() {
+        Platform.runLater(() -> {
+            textTask.requestFocus();
+        });
+        textTask.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                applyButton.fire();
+            }
+        });
         applyButton.setOnAction(actionEvent -> {
             String task = textTask.getText().trim();
             TaskAndListNameTransporter transporter = new TaskAndListNameTransporter();
@@ -24,4 +31,5 @@ public class AddController {
         });
         StyleHelper.styleButton(applyButton);
     }
+
 }

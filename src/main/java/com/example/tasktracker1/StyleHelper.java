@@ -17,6 +17,7 @@ public class StyleHelper {
     public static final String TRANSPARENT_STYLE = "-fx-background-color: transparent;";
 
     public static void styleButton(Button button) {
+        button.setOpacity(1);
         button.setOnMouseEntered(e -> {
             button.setCursor(Cursor.HAND);
             button.setStyle(StyleHelper.ON_MOUSE_ENTERED_STYLE);
