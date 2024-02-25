@@ -73,7 +73,6 @@ public class MainAppWindow extends Application  {
         stage.setResizable(false);
         stage.show();
 
-
         rButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
@@ -166,6 +165,7 @@ public class MainAppWindow extends Application  {
                 }
                 if (stringLButtonList.size() == 0) {
                     addButton.setDisable(true);
+                    addButton.setVisible(false);
                     deleteAllLines();
                     deleteListInfo();
                 }
@@ -347,6 +347,7 @@ public class MainAppWindow extends Application  {
         setupDeleteListButtons();
         if (listButtons.isEmpty()) {
             addButton.setDisable(true);
+            addButton.setVisible(false);
         }
     }
 
@@ -437,6 +438,7 @@ public class MainAppWindow extends Application  {
                 uploadListInfo();
             }
             addButton.setDisable(false);
+            addButton.setVisible(true);
             setupDeleteListButtons();
         }
     }

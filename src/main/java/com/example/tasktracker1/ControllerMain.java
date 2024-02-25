@@ -39,8 +39,6 @@ public class ControllerMain {
 
     }
     private void setOnAction(String resourceName) {
-//        plus.setDisable(true);
-//        bt.setDisable(true);
         anc.getChildren().remove(plus);
         anc.getChildren().remove(bt);
         FXMLLoader loader = new FXMLLoader();

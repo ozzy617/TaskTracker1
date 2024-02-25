@@ -14,7 +14,6 @@ public class DbOperator extends DBConfig {
         Properties auth = new Properties();
         auth.put("user", dbUser);
         auth.put("password", dbPass);
-        DriverManager.getConnection(connectionString,auth);
         return DriverManager.getConnection(connectionString,auth);
     }
 
