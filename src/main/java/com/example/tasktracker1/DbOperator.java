@@ -19,7 +19,7 @@ public class DbOperator extends DBConfig {
 
     public void writeTask(String task, String tableName) throws SQLException, ClassNotFoundException {
         tableName = changeNameForm(tableName);
-        String insert = "INSERT INTO " + tableName +"(" + COLUMN_NAME + ")" + "VALUES(?)";
+        String insert = "INSERT INTO " + tableName + "(" + COLUMN_NAME + ")" + "VALUES(?)";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(insert);
         preparedStatement.setString(1, task);
         preparedStatement.executeUpdate();

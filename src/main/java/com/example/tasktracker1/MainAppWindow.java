@@ -77,7 +77,7 @@ public class MainAppWindow extends Application  {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
                 selectedRButton =  (RadioButton) newValue;
-                setRButtonsNotActive();
+                setRButtonInactive();
                 selectedRButton.setDisable(false);
                 String selectedButtonText  =  selectedRButton.getText();
                 selectedRButton.setTextFill(Color.GRAY);
@@ -208,7 +208,7 @@ public class MainAppWindow extends Application  {
         }
     }
 
-    private void setRButtonsNotActive() {
+    private void setRButtonInactive() {
         for (RadioButton s : radioButtonList) {
             s.setDisable(true);
             s.setOpacity(1);
@@ -227,11 +227,11 @@ public class MainAppWindow extends Application  {
         radioButtonList.clear();
     }
 
-    private void constructLButton(String text, int pos) {
+    private ToggleButton constructLButton(String text, int pos, ListButtonOperator listButtonPositionOperator, ToggleGroup lButtonGroup, AnchorPane pane) {
         ToggleButton listButton = listButtonPositionOperator.designButton(text,pos);
         pane.getChildren().add(listButton);
-        listButtons.add(listButton);
         listButton.setToggleGroup(lButtonGroup);
+        return listButton;
     }
 
     private void deletePickedButton(String selectedButtonText, RadioButton selectedButton) throws SQLException, ClassNotFoundException {
@@ -339,7 +339,7 @@ public class MainAppWindow extends Application  {
         for (String s : stringLButtonList) {
             s = s.replaceAll("_", " ");
             int actualPosition = listButtonPositionOperator.getActualPosition();
-            constructLButton(s,actualPosition);
+            listButtons.add(constructLButton(s, actualPosition, listButtonPositionOperator, lButtonGroup, pane));
             listButtonPositionOperator.actualPositionChanger();
         }
         constructTaskSumLabels();
@@ -421,7 +421,7 @@ public class MainAppWindow extends Application  {
         public void getStringText(String text) {
             String listName = text;
             int actualPos = listButtonPositionOperator.getActualPosition();
-            constructLButton(listName,actualPos);
+            listButtons.add(constructLButton(listName, actualPos, listButtonPositionOperator, lButtonGroup, pane));
             listButtonPositionOperator.actualPositionChanger();
             setTaskCountLabel();
             stringLButtonList.add(listName);
