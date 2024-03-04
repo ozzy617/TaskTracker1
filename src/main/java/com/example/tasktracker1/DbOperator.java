@@ -28,7 +28,6 @@ public class DbOperator extends DBConfig {
     }
 
     public void deleteTask(String task, String tableName) throws ClassNotFoundException, SQLException {
-        //task = changeTaskNameForm(task);
         tableName = findTable(tableName);
         System.out.println("deleteTask " + tableName);
         String delete = "DELETE FROM " + tableName + " WHERE " + COLUMN_NAME + " = "  + "'" + task + "'" + ";";
@@ -54,10 +53,6 @@ public class DbOperator extends DBConfig {
     public ArrayList<String> countRows(ArrayList<String> tableNames) throws SQLException, ClassNotFoundException {
         ArrayList<String> rowsSum = new ArrayList<>();
         Statement statement = getDbConnection().createStatement();
-        for (String s : tableNames) {
-            System.out.println(s + " - count rows ");
-        }
-        System.out.println("--------------------");
         for (String s : tableNames) {
             String select = "SELECT COUNT(*) FROM " + s + ";";
             ResultSet set = statement.executeQuery(select);
@@ -97,16 +92,12 @@ public class DbOperator extends DBConfig {
             existingsLists.add(listName);
         }
         getDbConnection().close();
-        for (String s : existingsLists) {
-            System.out.println(s + " загруженное имя");
-        }
         return existingsLists;
     }
 
     public String createList(String listName) throws SQLException, ClassNotFoundException {
         if (findTable(listName).equals("")) {
             listName = changeTableNameForm(listName);
-            System.out.println(listName + " - create list");
             String create = "CREATE TABLE " + listName + " (task TEXT);";
             PreparedStatement preparedStatement = getDbConnection().prepareStatement(create);
             preparedStatement.executeUpdate();
@@ -131,7 +122,6 @@ public class DbOperator extends DBConfig {
     private String findTable(String tableName) throws SQLException, ClassNotFoundException {
         ArrayList<String> tableNames = loadListNames();
         String actualTableName = "";
-        System.out.println("before loop " + tableName);
         tableName = tableName.replaceAll(" ","_");
         for (String name : tableNames) {
             System.out.println(name.substring(4) + " - name, - " + tableName);
