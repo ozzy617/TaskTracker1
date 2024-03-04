@@ -29,7 +29,7 @@ public class TaskButtonOperator {
     public Line designLine(int linePos) {
         Line line = new Line();
         line.setStroke(Color.LIGHTGREY);
-        line.setStartX(286);
+        line.setStartX(290);
         line.setStartY(linePos);
         line.setEndX(750);
         line.setEndY(linePos);

@@ -33,13 +33,17 @@ public class AddListController {
             StringOperator lineOperator = new StringOperator();
             if (lineOperator.chekStrExistance(tasksListName)){
                 DbOperator dbOperator = new DbOperator();
-                try {
-                    dbOperator.createList(tasksListName);
-                    TaskAndListNameTransporter transporter = new TaskAndListNameTransporter();
-                    transporter.getListName(tasksListName);
-                } catch (SQLException | ClassNotFoundException e) {
-                    applyListButton.getScene().getWindow().hide();
-                }
+
+
+                TaskAndListNameTransporter transporter = new TaskAndListNameTransporter();
+                transporter.getListName(tasksListName);
+//                try {
+//                    dbOperator.createList(tasksListName);
+//                    TaskAndListNameTransporter transporter = new TaskAndListNameTransporter();
+//                    transporter.getListName(tasksListName);
+//                } catch (SQLException | ClassNotFoundException e) {
+//                    applyListButton.getScene().getWindow().hide();
+//                }
             }
             applyListButton.getScene().getWindow().hide();
         });
