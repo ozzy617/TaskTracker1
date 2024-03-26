@@ -19,6 +19,7 @@ public class DbOperatorTestClass {
     void setupAppWindowObject() {
         dbOperator = new DbOperator();
     }
+
     @AfterEach
     void deleteAddedValues () throws SQLException, ClassNotFoundException {
         ArrayList<String> tableList = dbOperator.loadListNames();
