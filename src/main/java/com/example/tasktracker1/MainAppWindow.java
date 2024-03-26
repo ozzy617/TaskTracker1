@@ -122,10 +122,12 @@ public class MainAppWindow extends Application  {
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
+                    selectedRButton = null;
                 }));
                 removeTime.play();
                 selectedRButton.setOnMousePressed(actionEvent -> {
                     removeTime.stop();
+                    selectedRButton = null;
                     deleteRButtons();
                     try {
                         setupRButtons();
@@ -190,7 +192,7 @@ public class MainAppWindow extends Application  {
                         listButtons.remove(i);
                         deleteListButtonsArray.remove(i);
                         try {
-                            dbOperator.deleteTable(stringLButtonList.get(i),i+1);
+                            dbOperator.deleteTable(stringLButtonList.get(i));
                             deleteLButtons();
                             setupLButtons();
                         } catch (SQLException | RuntimeException | ClassNotFoundException e) {

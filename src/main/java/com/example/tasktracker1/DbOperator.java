@@ -6,7 +6,9 @@ import java.util.Properties;
 
 public class DbOperator extends DBConfig {
 
-    private final static String COLUMN_NAME = "task";
+    private final static String COLUMN_ID = "id";
+
+    private  final static String COLUMN_NAME_TASK = "task";
 
     public Connection getDbConnection() throws ClassNotFoundException, SQLException {
         String connectionString = "jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbName;
@@ -17,8 +19,9 @@ public class DbOperator extends DBConfig {
         return DriverManager.getConnection(connectionString,auth);
     }
 
+    //TEST PASSED
     public void writeTask(String task, String tableName) throws SQLException, ClassNotFoundException {
-        String getId = "SELECT id FROM lists WHERE name = '" + tableName + "';";
+        String getId = "SELECT " + COLUMN_ID + " FROM lists WHERE name = '" + tableName + "';";
         Statement statementId = getDbConnection().createStatement();
         ResultSet resultSet = statementId.executeQuery(getId);
         resultSet.next();
@@ -29,38 +32,33 @@ public class DbOperator extends DBConfig {
         deleteTasksStatement.executeUpdate(deleteTasks);
         deleteTasksStatement.close();
     }
-    //DONE
-    public void deleteTask(String task, String tableName) throws ClassNotFoundException, SQLException {
-        //ПОВТОР
-        String getId = "SELECT id FROM lists WHERE name = '" + tableName + "';";
-        Statement statementId = getDbConnection().createStatement();
-        ResultSet resultSet = statementId.executeQuery(getId);
-        resultSet.next();
-        String tableId = resultSet.getString(1);
-        //
 
-        String deleteTasks = "DELETE FROM tasks WHERE id = ( SELECT id FROM tasks WHERE list_id = " + tableId  + " AND task = '" + task + "' ORDER BY id DESC LIMIT 1);";
+    //TEST PASSED
+    public void deleteTask(String task, String tableName) throws ClassNotFoundException, SQLException {
+        String tableId = getTableId(tableName);
+
+        String deleteTasks = "DELETE FROM tasks WHERE " + COLUMN_ID + " = ( SELECT " + COLUMN_ID + " FROM tasks WHERE list_id = " + tableId  + " AND task = '" + task + "' ORDER BY id DESC LIMIT 1);";
         Statement deleteTaskStatement = getDbConnection().createStatement();
         deleteTaskStatement.executeUpdate(deleteTasks);
         deleteTaskStatement.close();
         System.out.println(deleteTasks);
     }
 
-    //DONE
+    //TEST PASSED
     public ArrayList<String> loadListValues(String tableName) throws ClassNotFoundException, SQLException {
         ArrayList<String> existingsTasks = new ArrayList<>();
         String select = "SELECT tasks.task FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE lists.name = '" + tableName + "';";
         Statement statement = getDbConnection().createStatement();
         ResultSet result = statement.executeQuery(select);
         while (result.next()) {
-            String task = result.getString(COLUMN_NAME);
+            String task = result.getString(COLUMN_NAME_TASK);
             existingsTasks.add(task);
         }
         statement.close();
         return existingsTasks;
     }
 
-    //DONE
+    //TEST PASSED
     public ArrayList<String> countRows(ArrayList<String> tableNames) throws SQLException, ClassNotFoundException {
         ArrayList<String> rowsSum = new ArrayList<>();
         Statement statement = getDbConnection().createStatement();
@@ -75,14 +73,9 @@ public class DbOperator extends DBConfig {
         return rowsSum;
     }
 
-    //DONE
-    public void deleteTable(String tableName, int position) throws SQLException, ClassNotFoundException {
-        String getId = "SELECT id FROM lists WHERE name = '" + tableName + "';";
-        Statement statementId = getDbConnection().createStatement();
-        ResultSet resultSet = statementId.executeQuery(getId);
-        resultSet.next();
-        String tableId = resultSet.getString(1);
-        System.out.println(tableId + " - idDelTable");
+    //TEST PASSED
+    public void deleteTable(String tableName) throws SQLException, ClassNotFoundException {
+        String tableId = getTableId(tableName);
 
         String deleteTasks = "DELETE FROM tasks WHERE list_id = " + tableId + ";";
         Statement deleteTasksStatement = getDbConnection().createStatement();
@@ -95,7 +88,7 @@ public class DbOperator extends DBConfig {
         deleteTableStatement.close();
     }
 
-    //DONE
+    //TEST PASSED
     public ArrayList<String> loadListNames() throws SQLException, ClassNotFoundException {
         ArrayList<String> existingsLists = new ArrayList<>();
         String load = "SELECT name FROM lists;";
@@ -110,13 +103,23 @@ public class DbOperator extends DBConfig {
         return existingsLists;
     }
 
-    //DONE
+    //TEST PASSED
     public String createList(String listName) throws SQLException, ClassNotFoundException {
         String create = "INSERT INTO " + " lists (name)" +  "VALUES('" + listName + "');";
         PreparedStatement preparedStatement = getDbConnection().prepareStatement(create);
         preparedStatement.executeUpdate();
         preparedStatement.close();
         return listName;
+    }
+
+    //NOT TESTING
+    private String getTableId(String tableName) throws SQLException, ClassNotFoundException {
+        String getId = "SELECT " + COLUMN_ID + " FROM lists WHERE name = '" + tableName + "';";
+        Statement statementId = getDbConnection().createStatement();
+        ResultSet resultSet = statementId.executeQuery(getId);
+        resultSet.next();
+        String tableId = resultSet.getString(1);
+        return tableId;
     }
 }
 
