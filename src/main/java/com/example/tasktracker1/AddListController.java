@@ -2,12 +2,9 @@ package com.example.tasktracker1;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-
-import java.sql.SQLException;
 
 public class AddListController {
 
@@ -37,13 +34,6 @@ public class AddListController {
 
                 TaskAndListNameTransporter transporter = new TaskAndListNameTransporter();
                 transporter.getListName(tasksListName);
-//                try {
-//                    dbOperator.createList(tasksListName);
-//                    TaskAndListNameTransporter transporter = new TaskAndListNameTransporter();
-//                    transporter.getListName(tasksListName);
-//                } catch (SQLException | ClassNotFoundException e) {
-//                    applyListButton.getScene().getWindow().hide();
-//                }
             }
             applyListButton.getScene().getWindow().hide();
         });

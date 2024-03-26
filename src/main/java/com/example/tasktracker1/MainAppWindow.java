@@ -6,14 +6,10 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.event.EventTarget;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -63,6 +59,8 @@ public class MainAppWindow extends Application  {
         addTaskButton = (Button) root.lookup("#bt");
         addListButton = (Button) root.lookup("#plus");
         searchField = (TextField) root.lookup("#searchField");
+
+        //dbOperator.getDbConnection();
 
         //Почистить этот блок кода
         searchField.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -114,7 +112,6 @@ public class MainAppWindow extends Application  {
                 selectedRButton.setDisable(false);
                 String selectedButtonText  =  selectedRButton.getText();
                 selectedRButton.setTextFill(Color.GRAY);
-
                 removeTime = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
                     try {
                         deletePickedButton(selectedButtonText, selectedRButton);
@@ -147,8 +144,11 @@ public class MainAppWindow extends Application  {
                 try {
                     removeTime.stop();
                     System.out.println(selectedLButton.getText() + " - value before error");
-                    dbOperator.deleteTask(selectedRButton.getText(), selectedLButton.getText());
-                    constructTaskSumLabels();
+                    if (selectedRButton != null) {
+                        dbOperator.deleteTask(selectedRButton.getText(), selectedLButton.getText());
+                        constructTaskSumLabels();
+                        selectedRButton = null;
+                    }
                 } catch (SQLException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -374,18 +374,10 @@ public class MainAppWindow extends Application  {
     private void setupLButtons() throws SQLException, ClassNotFoundException {
         stringLButtonList = dbOperator.loadListNames();
         for (String s : stringLButtonList) {
-
-            //String text = s;
-            //text = text.substring(4);
-
-            //text = text.replaceAll("_", " ");
-            //s = s.replaceAll("_", " ");
+            System.out.println(s + " ddddd");
             int actualPosition = listButtonPositionOperator.getActualPosition();
-            listButtons.add(constructLButton(s.substring(4).replaceAll("_"," "), actualPosition, listButtonPositionOperator, lButtonGroup, pane));
+            listButtons.add(constructLButton(s, actualPosition, listButtonPositionOperator, lButtonGroup, pane));
             listButtonPositionOperator.actualPositionChanger();
-        }
-        for (String s : stringLButtonList) {
-            System.out.println(s + " meow");
         }
         constructTaskSumLabels();
         setupStartList();
@@ -466,7 +458,9 @@ public class MainAppWindow extends Application  {
         public void getStringText(String text) {
             String listName = null;
             try {
-                listName = dbOperator.createList(text);
+                if (!stringLButtonList.contains(text)) {
+                    listName = dbOperator.createList(text);
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } catch (ClassNotFoundException e) {
@@ -474,11 +468,12 @@ public class MainAppWindow extends Application  {
             }
             if (listName != null) {
                 int actualPos = listButtonPositionOperator.getActualPosition();
-                listButtons.add(constructLButton(listName.substring(4).replaceAll("_", " "), actualPos, listButtonPositionOperator, lButtonGroup, pane));
+                listButtons.add(constructLButton(listName, actualPos, listButtonPositionOperator, lButtonGroup, pane));
                 listButtonPositionOperator.actualPositionChanger();
                 setTaskCountLabel();
                 System.out.println(listName + " - listname");
                 stringLButtonList.add(listName);
+
                 try {
                     constructTaskSumLabels();
                 } catch (SQLException | ClassNotFoundException e) {

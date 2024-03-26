@@ -4,5 +4,5 @@ public class DBConfig {
     protected String dbPort = "5432";
     protected String dbUser = "postgres";
     protected String dbPass = "postgres";
-    protected String dbName = "postgress";
+    protected String dbName = "postgress1";
 }
