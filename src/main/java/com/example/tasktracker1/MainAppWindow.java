@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainAppWindow extends Application  {
     private final LinkedList<Line> linesList = new LinkedList<>();
@@ -50,6 +52,9 @@ public class MainAppWindow extends Application  {
     Timeline removeTime = new Timeline();
     private TextField searchField;
     private Button addListButton;
+    private  boolean changer = false;
+
+
     @Override
     public void start(Stage stage) throws IOException, SQLException, ClassNotFoundException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainAppWindow.class.getResource("sample.fxml"));
@@ -60,21 +65,39 @@ public class MainAppWindow extends Application  {
         addListButton = (Button) root.lookup("#plus");
         searchField = (TextField) root.lookup("#searchField");
 
-        //dbOperator.getDbConnection();
+        Runnable readTask = () -> {
+            while (!changer) {
+                try {
+                    Thread.sleep(1000);
+                    System.out.println(searchField.getText());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
 
-        //Почистить этот блок кода
+                }
+            }
+        };
+
+//        searchField.textProperty().addListener((observable1, oldValue1, newValue1) -> {
+//            System.out.println(searchField.getText());
+//        });
         searchField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
             if (newValue) {
+                changer = false;
+                executorService.execute(readTask);
                 addListButton.setVisible(false);
                 addTaskButton.setVisible(false);
                 deleteRButtons();
                 deleteAllLines();
                 deleteListInfo();
-                System.out.println("Фокус установлен на текстовом поле");
+                System.out.println("Фокус установлен на текстовом поле :");
             } else {
+                changer = true;
+                executorService.shutdown();
                 searchField.clear();
                 try {
                     setupRButtons();
+                    uploadListInfo();
                 } catch (SQLException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -257,13 +280,16 @@ public class MainAppWindow extends Application  {
             s.setDisable(false);
         }
     }
-    private void deleteRButtons(){
+    private void deleteRButtons() {
         for (int i = 0; i < radioButtonList.size(); i++) {
             pane.getChildren().remove(radioButtonList.get(i));
         }
         rButtonPositionOperator.setActualPosition(StyleHelper.TASK_BUTTON_INITIAL_POSITION);
         radioButtonList.clear();
     }
+//    private void deleteLabels() {
+//        for (int i = 0; i < )
+//    }
 
     private ToggleButton constructLButton(String text, int pos, ListButtonOperator listButtonPositionOperator, ToggleGroup lButtonGroup, AnchorPane pane) {
         ToggleButton listButton = listButtonPositionOperator.designButton(text,pos);

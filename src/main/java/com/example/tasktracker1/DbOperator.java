@@ -2,6 +2,7 @@ package com.example.tasktracker1;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class DbOperator extends DBConfig {
@@ -55,7 +56,24 @@ public class DbOperator extends DBConfig {
             existingsTasks.add(task);
         }
         statement.close();
+        getDbConnection().close();
         return existingsTasks;
+    }
+    //HashMap<String, String>
+    public ArrayList<String> loadSearchedValues(String task) throws SQLException, ClassNotFoundException {
+        String selectSearch = "SELECT tasks.task, lists.name FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE tasks.task = '" + task +"'";
+        Statement statement =  getDbConnection().createStatement();
+        ResultSet result = statement.executeQuery(selectSearch);
+        HashMap<String, String> tableMap = new HashMap<String, String>();
+        ArrayList<String> searchedLists = new ArrayList<>();
+        while(result.next()) {
+            String listValue = result.getString("name");
+            searchedLists.add(listValue);
+            String taskValue = result.getString(COLUMN_NAME_TASK);
+        }
+        statement.close();
+        getDbConnection().close();
+        return searchedLists;
     }
 
     //TEST PASSED
