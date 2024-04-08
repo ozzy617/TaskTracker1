@@ -67,7 +67,7 @@ public class MainAppWindow extends Application  {
             deleteAllLines();
             if (!searchField.getText().isEmpty()) {
                 try {
-                    //ArrayList<String> searchedLists = dbOperator.loadSearchedValues(newValue);
+                    //ArrayList<String> searchedLists = dbOperator.loadSearchedValues(newValue);f
                     HashMap<String, Integer> searchedLists = dbOperator.loadSearchedValues(newValue);
                     for (String s : searchedLists.keySet()) {
                         constructLabels(s);
