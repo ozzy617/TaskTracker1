@@ -26,6 +26,15 @@ public class TaskButtonOperator {
         return radioButton;
     }
 
+    public Label designLabel(String text, int pos) {
+        Label label = new Label();
+        label.setText(text);
+        label.setLayoutX(290);
+        label.setLayoutY(pos);
+        label.setFont(Font.font(StyleHelper.MAIN_FONT,18));
+        return label;
+    }
+
     public Line designLine(int linePos) {
         Line line = new Line();
         line.setStroke(Color.LIGHTGREY);

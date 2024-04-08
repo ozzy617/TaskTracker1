@@ -18,10 +18,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -52,8 +49,7 @@ public class MainAppWindow extends Application  {
     Timeline removeTime = new Timeline();
     private TextField searchField;
     private Button addListButton;
-    private  boolean changer = false;
-
+    private final ArrayList<Label> labelList = new ArrayList<>();
 
     @Override
     public void start(Stage stage) throws IOException, SQLException, ClassNotFoundException {
@@ -65,26 +61,37 @@ public class MainAppWindow extends Application  {
         addListButton = (Button) root.lookup("#plus");
         searchField = (TextField) root.lookup("#searchField");
 
-        Runnable readTask = () -> {
-            while (!changer) {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            deleteLabels();
+            deleteRButtons();
+            deleteAllLines();
+            if (!searchField.getText().isEmpty()) {
                 try {
-                    Thread.sleep(1000);
-                    System.out.println(searchField.getText());
-                } catch (InterruptedException e) {
+                    //ArrayList<String> searchedLists = dbOperator.loadSearchedValues(newValue);
+                    HashMap<String, Integer> searchedLists = dbOperator.loadSearchedValues(newValue);
+                    for (String s : searchedLists.keySet()) {
+                        constructLabels(s);
+                        int pos = rButtonPositionOperator.getActualPosition();
+                        rButtonPositionOperator.changeActualPosition();
+                        System.out.println(searchedLists.get(s));
+                        for (int i = 0; i < searchedLists.get(s); i++) {
+                            constructRButton(newValue, pos, 56);
+                            pos = rButtonPositionOperator.getActualPosition();
+                            rButtonPositionOperator.changeActualPosition();
+                        }
+                    }
+                } catch (SQLException e) {
                     throw new RuntimeException(e);
-
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }
-        };
+        });
 
-//        searchField.textProperty().addListener((observable1, oldValue1, newValue1) -> {
-//            System.out.println(searchField.getText());
-//        });
         searchField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
             if (newValue) {
-                changer = false;
-                executorService.execute(readTask);
+                selectedLButton.setDisable(false);
+                selectedLButton.setStyle(selectedButtonInactive);
                 addListButton.setVisible(false);
                 addTaskButton.setVisible(false);
                 deleteRButtons();
@@ -92,9 +99,11 @@ public class MainAppWindow extends Application  {
                 deleteListInfo();
                 System.out.println("Фокус установлен на текстовом поле :");
             } else {
-                changer = true;
-                executorService.shutdown();
+                deleteLabels();
+                selectedLButton.setDisable(true);
+                selectedLButton.setStyle(selectedButtonActive);
                 searchField.clear();
+                deleteRButtons();
                 try {
                     setupRButtons();
                     uploadListInfo();
@@ -234,16 +243,33 @@ public class MainAppWindow extends Application  {
         });
     }
 
-    private void constructRButton(String text, int pos) {
+    private void constructRButton(String text, int pos, int constant) {
         RadioButton rButton = rButtonPositionOperator.designButton(text, pos);
         pane.getChildren().add(rButton);
         radioButtonList.add(rButton);
         rButton.setToggleGroup(rButtonGroup);
         deleteAllLines();
-        constructLines(radioButtonList.size());
+        constructLines(radioButtonList.size(), constant);
     }
 
-    private void constructLines(int linesCounter) {
+    private void constructLabels(String text) {
+        int pos = rButtonPositionOperator.getActualPosition();
+        rButtonPositionOperator.changeActualPosition();
+        Label label = rButtonPositionOperator.designLabel(text, pos);
+        labelList.add(label);
+        pane.getChildren().add(label);
+    }
+    private void deleteLabels() {
+        for (Label l : labelList) {
+            pane.getChildren().remove(l);
+        }
+        labelList.clear();
+    }
+    //ПРИ УДАЛЕНИИ БУКВ ТАКЖЕ УДАЛЯТЬ ТО ЧТО НАШЛИ ДО ЭТОГО + ЛИНИЮ
+    //ТОЛЬКО ОДНА - МЕЖДУ НЕЙМОМ И ТАСКОМ ЛИНИЮ НЕ НАДО
+
+
+    private void constructLines(int linesCounter, int constant) {
         int c = 66;
         Line separateLine = new Line();
         separateLine.setStroke(Color.LIGHTGREY);
@@ -258,7 +284,7 @@ public class MainAppWindow extends Application  {
             Line line = rButtonPositionOperator.designLine(c);
             pane.getChildren().add(line);
             linesList.add(line);
-            c += 28;
+            c += constant;
         }
     }
 
@@ -287,10 +313,6 @@ public class MainAppWindow extends Application  {
         rButtonPositionOperator.setActualPosition(StyleHelper.TASK_BUTTON_INITIAL_POSITION);
         radioButtonList.clear();
     }
-//    private void deleteLabels() {
-//        for (int i = 0; i < )
-//    }
-
     private ToggleButton constructLButton(String text, int pos, ListButtonOperator listButtonPositionOperator, ToggleGroup lButtonGroup, AnchorPane pane) {
         ToggleButton listButton = listButtonPositionOperator.designButton(text,pos);
         pane.getChildren().add(listButton);
@@ -354,10 +376,10 @@ public class MainAppWindow extends Application  {
         stringRButtonList = dbOperator.loadListValues(selectedLButton.getText());
         for (String s : stringRButtonList) {
             int actualPosition = rButtonPositionOperator.getActualPosition();
-            constructRButton(s,actualPosition);
+            constructRButton(s, actualPosition, 28);
             rButtonPositionOperator.changeActualPosition();
         }
-        constructLines(radioButtonList.size());
+        constructLines(radioButtonList.size(), 28);
         setTaskCountLabel();
     }
     private void constructTaskSumLabels() throws SQLException, ClassNotFoundException {
@@ -451,7 +473,7 @@ public class MainAppWindow extends Application  {
         long delay3 = 204L;
         timer2.schedule(task2,delay3);
         deleteAllLines();
-        constructLines(radioButtonList.size());
+        constructLines(radioButtonList.size(), 28);
     }
 
     public class TaskHelper implements TaskAndListListener {
@@ -465,7 +487,7 @@ public class MainAppWindow extends Application  {
                     taskAdder.writeTask(text, selectedLButton.getText());
                     String task = text;
                     int actualPos = rButtonPositionOperator.getActualPosition();
-                    constructRButton(task,actualPos);
+                    constructRButton(task, actualPos,28);
                     rButtonPositionOperator.changeActualPosition();
                 } catch (ClassNotFoundException | SQLException e) {
                     throw new RuntimeException(e);
