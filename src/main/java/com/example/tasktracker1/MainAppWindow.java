@@ -65,20 +65,31 @@ public class MainAppWindow extends Application  {
             deleteLabels();
             deleteRButtons();
             deleteAllLines();
+            radioButtonList.clear();
+            LinkedList<RadioButton> tempList = new LinkedList<>();
+            int lastInd = 0;
             if (!searchField.getText().isEmpty()) {
                 try {
-                    //ArrayList<String> searchedLists = dbOperator.loadSearchedValues(newValue);f
-                    HashMap<String, Integer> searchedLists = dbOperator.loadSearchedValues(newValue);
+                    HashMap<String, ArrayList<String>> searchedLists = dbOperator.loadSearchedValues(newValue);
                     for (String s : searchedLists.keySet()) {
+                        tempList.clear();
                         constructLabels(s);
                         int pos = rButtonPositionOperator.getActualPosition();
                         rButtonPositionOperator.changeActualPosition();
-                        System.out.println(searchedLists.get(s));
-                        for (int i = 0; i < searchedLists.get(s); i++) {
-                            constructRButton(newValue, pos, 56);
+                        ArrayList<String> list = searchedLists.get(s);
+                        for (int i = 0; i < list.size(); i++) {
+
+                            constructRButton(list.get(i), pos, 28);
                             pos = rButtonPositionOperator.getActualPosition();
                             rButtonPositionOperator.changeActualPosition();
                         }
+                        for (int i = lastInd; i < radioButtonList.size(); i++) {
+                            tempList.add(radioButtonList.get(i));
+                            System.out.println(radioButtonList.get(i).getLayoutY() + " layout");
+                            lastInd++;
+                        }
+                        //lastInd--;
+                        constructLines(tempList.size() - 1, 28, (int) tempList.get(0).getLayoutY()-4 + 28);
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -248,8 +259,7 @@ public class MainAppWindow extends Application  {
         pane.getChildren().add(rButton);
         radioButtonList.add(rButton);
         rButton.setToggleGroup(rButtonGroup);
-        deleteAllLines();
-        constructLines(radioButtonList.size(), constant);
+//        deleteAllLines();
     }
 
     private void constructLabels(String text) {
@@ -269,22 +279,22 @@ public class MainAppWindow extends Application  {
     //ТОЛЬКО ОДНА - МЕЖДУ НЕЙМОМ И ТАСКОМ ЛИНИЮ НЕ НАДО
 
 
-    private void constructLines(int linesCounter, int constant) {
+    private void constructLines(int linesCounter, int constant, int start) {
         int c = 66;
         Line separateLine = new Line();
         separateLine.setStroke(Color.LIGHTGREY);
         separateLine.setStartX(615);
         separateLine.setStartY(0);
         separateLine.setEndX(615);
-        separateLine.setEndY(c);
+        separateLine.setEndY(66);
         pane.getChildren().add(separateLine);
-        Line firstLine = rButtonPositionOperator.designLine(c);
+        Line firstLine = rButtonPositionOperator.designLine(66);
         pane.getChildren().add(firstLine);
         for (int  i = 0; i < linesCounter + 1; i++) {
-            Line line = rButtonPositionOperator.designLine(c);
+            Line line = rButtonPositionOperator.designLine(start);
             pane.getChildren().add(line);
             linesList.add(line);
-            c += constant;
+            start += constant;
         }
     }
 
@@ -379,7 +389,7 @@ public class MainAppWindow extends Application  {
             constructRButton(s, actualPosition, 28);
             rButtonPositionOperator.changeActualPosition();
         }
-        constructLines(radioButtonList.size(), 28);
+        constructLines(radioButtonList.size(), 28,66);
         setTaskCountLabel();
     }
     private void constructTaskSumLabels() throws SQLException, ClassNotFoundException {
@@ -473,7 +483,7 @@ public class MainAppWindow extends Application  {
         long delay3 = 204L;
         timer2.schedule(task2,delay3);
         deleteAllLines();
-        constructLines(radioButtonList.size(), 28);
+        constructLines(radioButtonList.size(), 28,66);
     }
 
     public class TaskHelper implements TaskAndListListener {
@@ -489,6 +499,8 @@ public class MainAppWindow extends Application  {
                     int actualPos = rButtonPositionOperator.getActualPosition();
                     constructRButton(task, actualPos,28);
                     rButtonPositionOperator.changeActualPosition();
+                    deleteAllLines();
+                    constructLines(radioButtonList.size(), 28, (int) radioButtonList.get(0).getLayoutY()-4);
                 } catch (ClassNotFoundException | SQLException e) {
                     throw new RuntimeException(e);
                 }

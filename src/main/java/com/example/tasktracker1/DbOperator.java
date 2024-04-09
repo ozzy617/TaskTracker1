@@ -59,29 +59,19 @@ public class DbOperator extends DBConfig {
         getDbConnection().close();
         return existingsTasks;
     }
-    //HashMap<String, String>
-    public HashMap<String, Integer> loadSearchedValues(String task) throws SQLException, ClassNotFoundException {
-        String selectSearch = "SELECT tasks.task, lists.name FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE tasks.task like '" + task +"%'";
+    public HashMap<String, ArrayList<String>> loadSearchedValues(String task) throws SQLException, ClassNotFoundException {
+        String selectSearch = "SELECT tasks.task, lists.name FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE tasks.task like '%" + task +"%'";
         Statement statement =  getDbConnection().createStatement();
         ResultSet result = statement.executeQuery(selectSearch);
-        String[] list;
-        HashMap<String, Integer> tableMap = new HashMap<>();
-        HashMap<String, String[]> taskMap = new HashMap<>();
-        ArrayList<String> searchedLists = new ArrayList<>();
+        HashMap<String, ArrayList<String>> taskMap = new HashMap<>();
         while(result.next()) {
             String listValue = result.getString("name");
-            if (!tableMap.containsKey(listValue)) {
-                tableMap.put(listValue,0);
-            }
-            tableMap.put(listValue,tableMap.get(listValue) + 1);
-            searchedLists.add(listValue);
             String taskValue = result.getString(COLUMN_NAME_TASK);
-            list = taskValue.split("");
-            taskMap.put(listValue, list);
+            taskMap.computeIfAbsent(listValue, k -> new ArrayList<>()).add(taskValue);
         }
         statement.close();
         getDbConnection().close();
-        return tableMap;
+        return taskMap;
     }
 
     //TEST PASSED
