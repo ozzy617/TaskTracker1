@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -57,6 +58,7 @@ public class MainAppWindow extends Application  {
         pane = new AnchorPane();
         Parent root = fxmlLoader.load();
         pane.getChildren().add(root);
+
         addTaskButton = (Button) root.lookup("#bt");
         addListButton = (Button) root.lookup("#plus");
         searchField = (TextField) root.lookup("#searchField");

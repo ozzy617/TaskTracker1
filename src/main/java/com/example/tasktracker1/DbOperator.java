@@ -59,6 +59,8 @@ public class DbOperator extends DBConfig {
         getDbConnection().close();
         return existingsTasks;
     }
+
+
     public HashMap<String, ArrayList<String>> loadSearchedValues(String task) throws SQLException, ClassNotFoundException {
         String selectSearch = "SELECT tasks.task, lists.name FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE tasks.task like '%" + task +"%'";
         Statement statement =  getDbConnection().createStatement();
