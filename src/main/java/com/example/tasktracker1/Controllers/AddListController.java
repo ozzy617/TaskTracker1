@@ -1,5 +1,9 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.Controllers;
 
+import com.example.tasktracker1.util.StringOperator;
+import com.example.tasktracker1.util.StyleHelper;
+import com.example.tasktracker1.operators.TaskAndListNameTransporter;
+import com.example.tasktracker1.database.DbOperator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

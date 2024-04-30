@@ -1,9 +1,11 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.operators;
 
+import com.example.tasktracker1.util.StyleHelper;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
 public class ListButtonOperator {
@@ -13,17 +15,21 @@ public class ListButtonOperator {
     public ToggleButton designButton(String text, int pos) {
         ToggleButton button = new ToggleButton(text);
         button.setFont(Font.font(StyleHelper.MAIN_FONT, 15));
-        button.setTextFill(Color.WHITE);
-        button.setStyle("-fx-background-color: #20B2AA");
+
+        button.setStyle("-fx-border-color: #FFFFFF; -fx-border-width:2px; -fx-background-color:#474C5F");
+        button.setTextFill(Paint.valueOf("#FFFFFF"));
         button.setOnMouseEntered(e -> {
             button.setCursor(Cursor.HAND);
-            button.setStyle("-fx-background-color: #FFFFFF, " +
-                    "linear-gradient(from 0% 0% to 100% 100%, #20B2AA, #4169E1)");
+
+            button.setStyle("-fx-border-color: #B8860B; -fx-border-width:2px; -fx-background-color:#474C5F");
+            button.setTextFill(Paint.valueOf("#B8860B"));
+
         });
         button.setOnMouseExited(e -> {
             button.setCursor(Cursor.DEFAULT);
             if (!button.isDisable()){
-                button.setStyle("-fx-background-color: #20B2AA");
+                button.setStyle("-fx-border-color: #FFFFFF; -fx-border-width:2px; -fx-background-color:#474C5F");
+                button.setTextFill(Paint.valueOf("#FFFFFF"));
             }
         });
         button.setLayoutX(20);

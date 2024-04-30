@@ -1,4 +1,4 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.util;
 
 public class StringOperator {
     public boolean chekStrExistance(String taskStr) {

@@ -1,4 +1,6 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.database;
+
+import com.example.tasktracker1.database.DBConfig;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,10 +41,10 @@ public class DbOperator extends DBConfig {
         String tableId = getTableId(tableName);
 
         String deleteTasks = "DELETE FROM tasks WHERE " + COLUMN_ID + " = ( SELECT " + COLUMN_ID + " FROM tasks WHERE list_id = " + tableId  + " AND task = '" + task + "' ORDER BY id DESC LIMIT 1);";
+        System.out.println(deleteTasks);
         Statement deleteTaskStatement = getDbConnection().createStatement();
         deleteTaskStatement.executeUpdate(deleteTasks);
         deleteTaskStatement.close();
-        System.out.println(deleteTasks);
     }
 
     //TEST PASSED

@@ -1,20 +1,18 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.anim;
 
 import javafx.animation.TranslateTransition;
 import javafx.scene.Node;
 import javafx.util.Duration;
 
-public class ChangePositionAnimation {
-
+public class BackwardAnim {
     private TranslateTransition translateTransition;
 
-    public ChangePositionAnimation(Node node) {
-        translateTransition = new TranslateTransition(Duration.seconds(0.2),node);
+    public BackwardAnim(Node node){
+        translateTransition = new TranslateTransition(Duration.millis(1),node);
         translateTransition.setFromY(0f);
-        translateTransition.setByY(-28f);
+        translateTransition.setByY(0f);
         translateTransition.setCycleCount(1);
     }
-
 
     public void playAnim() {
         translateTransition.playFromStart();

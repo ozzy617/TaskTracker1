@@ -1,12 +1,12 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.util;
 
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 
 public class StyleHelper {
-    public static final String ON_MOUSE_ENTERED_STYLE = "-fx-background-color: #4682B4;";
+    public static final String ON_MOUSE_ENTERED_STYLE = "-fx-background-color: #B8860B;";
 
-    public static final String ON_MOUSE_EXITED_STYLE = "-fx-background-color: #008080;";
+    public static final String ON_MOUSE_EXITED_STYLE = "-fx-background-color: #474C5F;";
 
     public static final String MAIN_FONT = "American Typewriter Semibold";
 

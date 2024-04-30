@@ -1,5 +1,6 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.Controllers;
 
+import com.example.tasktracker1.util.StyleHelper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,8 +29,8 @@ public class ControllerMain {
     private TextField searchField;
 
     public void initialize() {
-        searchField.setStyle(" -fx-focus-color: DCDCDC;");
-        searchField.setFocusTraversable(false);
+        searchField.setStyle("-fx-focus-color: #a41ba4; -fx-border-radius: 3px; -fx-background-color: #83899b; -fx-border-style: solid; -fx-border-color: #83899b;");
+        searchField.setFocusTraversable(false);//#5a606e
         Platform.runLater(() -> anc.requestFocus());
         bt.fire();
         bt.setOnAction(actionEvent -> setOnAction("addWindow.fxml"));
@@ -42,7 +43,7 @@ public class ControllerMain {
         });
         plus.setOnMouseEntered(e -> {
             plus.setCursor(Cursor.HAND);
-            plus.setStyle("-fx-background-color: #DCDCDC;");
+            plus.setStyle("-fx-background-color: #5a606e;");
         });
         plus.setOnMouseExited(e -> {
             plus.setCursor(Cursor.DEFAULT);

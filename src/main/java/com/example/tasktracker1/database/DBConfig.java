@@ -1,4 +1,4 @@
-package com.example.tasktracker1;
+package com.example.tasktracker1.database;
 public class DBConfig {
     protected String dbHost = "localhost";
     protected String dbPort = "5432";

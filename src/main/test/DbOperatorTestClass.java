@@ -1,4 +1,4 @@
-import com.example.tasktracker1.DbOperator;
+import com.example.tasktracker1.database.DbOperator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
