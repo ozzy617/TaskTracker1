@@ -37,6 +37,7 @@ public class TaskButtonOperator {
         label.setLayoutX(290);
         label.setLayoutY(pos);
         label.setFont(Font.font(StyleHelper.MAIN_FONT,18));
+        label.setTextFill(Paint.valueOf("#FFFFFF"));
         return label;
     }
 

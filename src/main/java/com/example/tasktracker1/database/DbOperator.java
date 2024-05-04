@@ -30,7 +30,7 @@ public class DbOperator extends DBConfig {
         resultSet.next();
         String tableId = resultSet.getString(1);
 
-        String deleteTasks = "INSERT INTO tasks (task, list_id) VALUES ('" + task + "', '" + tableId +"');";
+        String deleteTasks = "INSERT INTO tasks (task, list_id, complete) VALUES ('" + task + "', '" + tableId +"', FALSE);";
         Statement deleteTasksStatement = getDbConnection().createStatement();
         deleteTasksStatement.executeUpdate(deleteTasks);
         deleteTasksStatement.close();
@@ -40,7 +40,8 @@ public class DbOperator extends DBConfig {
     public void deleteTask(String task, String tableName) throws ClassNotFoundException, SQLException {
         String tableId = getTableId(tableName);
 
-        String deleteTasks = "DELETE FROM tasks WHERE " + COLUMN_ID + " = ( SELECT " + COLUMN_ID + " FROM tasks WHERE list_id = " + tableId  + " AND task = '" + task + "' ORDER BY id DESC LIMIT 1);";
+        //String deleteTasks = "DELETE FROM tasks WHERE " + COLUMN_ID + " = ( SELECT " + COLUMN_ID + " FROM tasks WHERE list_id = " + tableId  + " AND task = '" + task + "' ORDER BY id DESC LIMIT 1);";
+        String deleteTasks = "UPDATE tasks set complete = true WHERE " + COLUMN_ID + " = ( SELECT " + COLUMN_ID + " FROM tasks WHERE list_id = " + tableId  + " AND task = '" + task + "' ORDER BY id DESC LIMIT 1);";
         System.out.println(deleteTasks);
         Statement deleteTaskStatement = getDbConnection().createStatement();
         deleteTaskStatement.executeUpdate(deleteTasks);
@@ -50,7 +51,7 @@ public class DbOperator extends DBConfig {
     //TEST PASSED
     public ArrayList<String> loadListValues(String tableName) throws ClassNotFoundException, SQLException {
         ArrayList<String> existingsTasks = new ArrayList<>();
-        String select = "SELECT tasks.task FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE lists.name = '" + tableName + "';";
+        String select = "SELECT tasks.task FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE lists.name = '" + tableName + "' AND complete = FALSE;";
         Statement statement = getDbConnection().createStatement();
         ResultSet result = statement.executeQuery(select);
         while (result.next()) {
@@ -63,8 +64,14 @@ public class DbOperator extends DBConfig {
     }
 
 
-    public HashMap<String, ArrayList<String>> loadSearchedValues(String task) throws SQLException, ClassNotFoundException {
-        String selectSearch = "SELECT tasks.task, lists.name FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE tasks.task like '%" + task +"%'";
+    public HashMap<String, ArrayList<String>> loadSearchedValues(String task, boolean flag) throws SQLException, ClassNotFoundException {
+        String selectSearch;
+        if (flag) {
+            selectSearch = "SELECT tasks.task, lists.name FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE tasks.task IS NOT NULL AND complete = " + flag + ";";
+        } else {
+            selectSearch = "SELECT tasks.task, lists.name FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE tasks.task like '%" + task +"%' AND complete = " + flag + ";";
+        }
+        System.out.println(selectSearch);
         Statement statement =  getDbConnection().createStatement();
         ResultSet result = statement.executeQuery(selectSearch);
         HashMap<String, ArrayList<String>> taskMap = new HashMap<>();
@@ -83,7 +90,7 @@ public class DbOperator extends DBConfig {
         ArrayList<String> rowsSum = new ArrayList<>();
         Statement statement = getDbConnection().createStatement();
         for (String s : tableNames) {
-            String select = "SELECT COUNT(*) FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE lists.name = '" + s + "';";
+            String select = "SELECT COUNT(*) FROM tasks JOIN lists ON tasks.list_id = lists.id WHERE lists.name = '" + s + "' AND complete = FALSE;";
             ResultSet set = statement.executeQuery(select);
             set.next();
             String res = set.getString(1);

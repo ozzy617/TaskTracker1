@@ -8,24 +8,24 @@
 
 <AnchorPane fx:id="anc" maxHeight="330.0" maxWidth="438.0" minHeight="330.0" minWidth="438.0" prefHeight="331.0" prefWidth="438.0" style="-fx-background-color: #E0FFFF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tasktracker1.Controllers.AddController">
     <children>
-        <AnchorPane maxHeight="330.0" maxWidth="438.0" prefHeight="330.0" prefWidth="438.0" style="-fx-background-color: #AFEEEE;">
+        <AnchorPane maxHeight="330.0" maxWidth="438.0" prefHeight="330.0" prefWidth="438.0" style="-fx-background-color: #838BA1FF;">
             <children>
                 <Label prefHeight="35.0" prefWidth="304.0">
                     <font>
                         <Font name="American Typewriter" size="37.0" />
                     </font>
                 </Label>
-              <Button fx:id="applyButton" layoutX="144.0" layoutY="242.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #008080;" text="Добавить задачу" textFill="WHITE">
+              <Button fx:id="applyButton" layoutX="144.0" layoutY="242.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #474C5F;" text="Добавить задачу" textFill="WHITE">
                   <font>
                       <Font name="American Typewriter Semibold" size="15.0" />
                   </font>
             </Button>
-            <Label layoutX="35.0" layoutY="45.0" text="Введите напоминание:">
+            <Label layoutX="35.0" layoutY="45.0" text="Введите задачу:" style="-fx-text-fill: #FFFFFF">
                <font>
-                  <Font name="American Typewriter" size="33.0" />
+                  <Font name="American Typewriter" size="33.0"/>
                </font>
             </Label>
-            <TextField fx:id="textTask" layoutX="47.0" layoutY="147.0" prefHeight="26.0" prefWidth="373.0">
+            <TextField fx:id="textTask" layoutX="47.0" layoutY="147.0" prefHeight="26.0" prefWidth="373.0" style="-fx-border-style: solid; -fx-border-color: #83899b;-fx-focus-color: #83899b;-fx-border-radius: 3px;">
                <font>
                   <Font name="American Typewriter" size="15.0" />
                </font>

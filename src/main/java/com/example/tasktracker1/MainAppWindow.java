@@ -25,6 +25,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -65,9 +66,10 @@ public class MainAppWindow extends Application  {
     private final AtomicBoolean isToggleSelected = new AtomicBoolean(false);
     private final AtomicBoolean isSearchFieldSelected = new AtomicBoolean(false);
     Timeline timeline;
+    private final ToggleGroup optionGroup = new ToggleGroup();
+
 
     HashMap<String, LinkedList<RadioButton>> searchedButtons = new HashMap<>();
-
     @Override
     public void start(Stage stage) throws IOException, SQLException, ClassNotFoundException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainAppWindow.class.getResource("sample.fxml"));
@@ -78,43 +80,57 @@ public class MainAppWindow extends Application  {
         addTaskButton = (Button) root.lookup("#bt");
         addListButton = (Button) root.lookup("#plus");
         searchField = (TextField) root.lookup("#searchField");
+        Button completed = (Button) root.lookup("#completed");
+
+        completed.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                deleteLabels();
+                deleteRButtons();
+                deleteAllLines();
+                deleteListInfo();
+                radioButtonList.clear();
+                find("", true);
+                selectedLButton.setStyle(selectedButtonInactive);
+                selectedLButton.setTextFill(Paint.valueOf(selectedButtonInactiveText));
+                selectedLButton.setDisable(false);
+            } else {
+//                selectedLButton.setStyle(selectedButtonActive);
+//                selectedLButton.setTextFill(Paint.valueOf(selectedButtonActiveText));
+
+                System.out.println("completed button picked");
+
+            }
+        });
+
+
+//        completed.setOnAction(e-> {
+//            deleteLabels();
+//            deleteRButtons();
+//            deleteAllLines();
+//            radioButtonList.clear();
+//            find("", true);
+//            System.out.println("button pressed");
+//        });
+//        optionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
+//
+//                Platform.runLater(() -> pane.requestFocus());
+//                ToggleButton selectedOptButton = (ToggleButton) newValue;
+//
+//
+//            }
+//        });
+
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             deleteLabels();
             deleteRButtons();
             deleteAllLines();
             radioButtonList.clear();
-            LinkedList<RadioButton> tempList = new LinkedList<>();
-            int lastInd = 0;
             if (!searchField.getText().isEmpty()) {
-                try {
-                    HashMap<String, ArrayList<String>> searchedLists = dbOperator.loadSearchedValues(newValue);
-                    for (String s : searchedLists.keySet()) {
-                        tempList.clear();
-                        constructLabels(s);
-                        int pos = rButtonPositionOperator.getActualPosition();
-                        rButtonPositionOperator.changeActualPosition();
-                        ArrayList<String> list = searchedLists.get(s);
-                        for (int i = 0; i < list.size(); i++) {
+                find(newValue, false);
 
-                            constructRButton(list.get(i), pos, 28);
-                            pos = rButtonPositionOperator.getActualPosition();
-                            rButtonPositionOperator.changeActualPosition();
-                        }
-                        for (int i = lastInd; i < radioButtonList.size(); i++) {
-                            tempList.add(radioButtonList.get(i));
-                            searchedButtons.computeIfAbsent(s, k -> new LinkedList<>()).add(radioButtonList.get(i));
-                            System.out.println(radioButtonList.get(i).getLayoutY() + " layout");
-                            lastInd++;
-                        }
-                        constructLines(tempList.size() - 1, 28, (int) tempList.get(0).getLayoutY()-4 + 28);
-                    }
-
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
             }
         });
 
@@ -191,7 +207,6 @@ public class MainAppWindow extends Application  {
                 selectedRButton =  (RadioButton) newValue;
                 setRButtonInactive();
                 selectedRButton.setDisable(false);
-                //selectedRButton.setOpacity(1);
                 String selectedButtonText  =  selectedRButton.getText();
                 selectedRButton.setTextFill(Color.LIGHTGREY);
                 removeTime = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
@@ -264,6 +279,7 @@ public class MainAppWindow extends Application  {
         lButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
+                deleteLabels();
                 System.out.println("ToggleGroup сработала");
                 listButtons.get(0).setDisable(false);
                 listButtons.get(0).setStyle(selectedButtonInactive);
@@ -278,8 +294,9 @@ public class MainAppWindow extends Application  {
                 } catch (SQLException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-                selectedLButton = (ToggleButton) newValue;
-                lastSelectedButton.setDisable(false);
+                if (newValue != null) {
+                    selectedLButton = (ToggleButton) newValue;
+                }
                 selectedLButton.setDisable(true);
                 lastSelectedButton.setStyle(selectedButtonInactive);
                 lastSelectedButton.setTextFill(Paint.valueOf(selectedButtonInactiveText));
@@ -569,8 +586,41 @@ public class MainAppWindow extends Application  {
         constructLines(radioButtonList.size(), 28,66);
     }
 
-    public class TaskHelper implements TaskAndListListener {
+    //REFACTOR
+    private void find(String newValue, boolean flag) {
+            LinkedList<RadioButton> tempList = new LinkedList<>();
+            int lastInd = 0;
+            try {
+                HashMap<String, ArrayList<String>> searchedLists = dbOperator.loadSearchedValues(newValue, flag);
+                for (String s : searchedLists.keySet()) {
+                    tempList.clear();
+                    constructLabels(s);
+                    int pos = rButtonPositionOperator.getActualPosition();
+                    rButtonPositionOperator.changeActualPosition();
+                    ArrayList<String> list = searchedLists.get(s);
+                    for (int i = 0; i < list.size(); i++) {
 
+                        constructRButton(list.get(i), pos, 28);
+                        pos = rButtonPositionOperator.getActualPosition();
+                        rButtonPositionOperator.changeActualPosition();
+                    }
+                    for (int i = lastInd; i < radioButtonList.size(); i++) {
+                        tempList.add(radioButtonList.get(i));
+                        searchedButtons.computeIfAbsent(s, k -> new LinkedList<>()).add(radioButtonList.get(i));
+                        System.out.println(radioButtonList.get(i).getLayoutY() + " layout");
+                        lastInd++;
+                    }
+                    constructLines(tempList.size() - 1, 28, (int) tempList.get(0).getLayoutY()-4 + 28);
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+    }
+
+    public class TaskHelper implements TaskAndListListener {
         @Override
         public void getStringText(String text) {
             DbOperator taskAdder = new DbOperator();

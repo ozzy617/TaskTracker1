@@ -12,7 +12,7 @@ public class StyleHelper {
 
     public static final int TASK_BUTTON_INITIAL_POSITION = 70;
 
-    public static final int LIST_BUTTON_INITIAL_POSITION = 62;//42
+    public static final int LIST_BUTTON_INITIAL_POSITION = 146;//62
 
     public static final String TRANSPARENT_STYLE = "-fx-background-color: transparent;";
 

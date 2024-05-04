@@ -10,7 +10,7 @@ import javafx.scene.text.Font;
 
 public class ListButtonOperator {
     private int  initialButtonPos = StyleHelper.LIST_BUTTON_INITIAL_POSITION;
-    private final static int BUTTONS_OFFSET = 40; //40 changed to 60
+    private final static int BUTTONS_OFFSET = 40; //40
 
     public ToggleButton designButton(String text, int pos) {
         ToggleButton button = new ToggleButton(text);

@@ -2,6 +2,7 @@ module com.example.tasktracker1 {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires de.jensd.fx.glyphs.fontawesome;
 
 
     opens com.example.tasktracker1 to javafx.fxml;
