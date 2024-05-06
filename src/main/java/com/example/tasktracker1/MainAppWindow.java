@@ -15,10 +15,13 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -68,15 +71,14 @@ public class MainAppWindow extends Application  {
     Timeline timeline;
     private final ToggleGroup optionGroup = new ToggleGroup();
 
-
     HashMap<String, LinkedList<RadioButton>> searchedButtons = new HashMap<>();
     @Override
     public void start(Stage stage) throws IOException, SQLException, ClassNotFoundException {
+
         FXMLLoader fxmlLoader = new FXMLLoader(MainAppWindow.class.getResource("sample.fxml"));
         pane = new AnchorPane();
         Parent root = fxmlLoader.load();
         pane.getChildren().add(root);
-
         addTaskButton = (Button) root.lookup("#bt");
         addListButton = (Button) root.lookup("#plus");
         searchField = (TextField) root.lookup("#searchField");
@@ -93,35 +95,8 @@ public class MainAppWindow extends Application  {
                 selectedLButton.setStyle(selectedButtonInactive);
                 selectedLButton.setTextFill(Paint.valueOf(selectedButtonInactiveText));
                 selectedLButton.setDisable(false);
-            } else {
-//                selectedLButton.setStyle(selectedButtonActive);
-//                selectedLButton.setTextFill(Paint.valueOf(selectedButtonActiveText));
-
-                System.out.println("completed button picked");
-
             }
         });
-
-
-//        completed.setOnAction(e-> {
-//            deleteLabels();
-//            deleteRButtons();
-//            deleteAllLines();
-//            radioButtonList.clear();
-//            find("", true);
-//            System.out.println("button pressed");
-//        });
-//        optionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
-//
-//                Platform.runLater(() -> pane.requestFocus());
-//                ToggleButton selectedOptButton = (ToggleButton) newValue;
-//
-//
-//            }
-//        });
-
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             deleteLabels();
@@ -235,10 +210,6 @@ public class MainAppWindow extends Application  {
                                     lButtonValue = s;
                                 }
                             }
-//                            if (list.contains(selectedRButton)) {
-//                                lButtonValue = s;
-//                                break;
-//                            }
                         }
                         System.out.println(lButtonValue + " - text");
                         deletePickedButton(selectedButtonText, selectedRButton);
@@ -279,6 +250,18 @@ public class MainAppWindow extends Application  {
         lButtonGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue, Toggle oldValue, Toggle newValue) {
+
+                //метод RefreshButtons
+                completed.setDisable(false);
+                completed.setStyle("-fx-background-color: #d0d0d0; -fx-background-radius: 15");
+                ((FontAwesomeIconView) root.lookup("#completeIcon")).setFill(Paint.valueOf("#7C7979"));
+                ((Label) root.lookup("#completeLabel")).setStyle("-fx-text-fill: #000000");
+                completed.setCursor(Cursor.HAND);
+                deleteAllLines();
+                deleteRButtons();
+                deleteLabels();
+                //метод RefreshButtons
+
                 deleteLabels();
                 System.out.println("ToggleGroup сработала");
                 listButtons.get(0).setDisable(false);
@@ -296,14 +279,22 @@ public class MainAppWindow extends Application  {
                 }
                 if (newValue != null) {
                     selectedLButton = (ToggleButton) newValue;
+                    lastSelectedButton.setDisable(false);
+                    selectedLButton.setDisable(true);
+                    lastSelectedButton.setStyle(selectedButtonInactive);
+                    lastSelectedButton.setTextFill(Paint.valueOf(selectedButtonInactiveText));
+                    selectedLButton.setStyle(selectedButtonActive);
+                    selectedLButton.setTextFill(Paint.valueOf(selectedButtonActiveText));
+                    lastSelectedButton = selectedLButton;
+                } else  {
+
                 }
                 selectedLButton.setDisable(true);
-                lastSelectedButton.setStyle(selectedButtonInactive);
-                lastSelectedButton.setTextFill(Paint.valueOf(selectedButtonInactiveText));
                 selectedLButton.setStyle(selectedButtonActive);
                 selectedLButton.setTextFill(Paint.valueOf(selectedButtonActiveText));
+
                 selectedLButton.setOpacity(1);
-                lastSelectedButton = selectedLButton;
+                //lastSelectedButton = selectedLButton;
 
                 try {
                     stringRButtonList = dbOperator.loadListValues(selectedLButton.getText());
@@ -354,7 +345,7 @@ public class MainAppWindow extends Application  {
         });
     }
 
-    private void constructRButton(String text, int pos, int constant) {
+    private void constructRButton(String text, int pos) {
         RadioButton rButton = rButtonPositionOperator.designButton(text, pos);
         pane.getChildren().add(rButton);
         radioButtonList.add(rButton);
@@ -486,7 +477,7 @@ public class MainAppWindow extends Application  {
         stringRButtonList = dbOperator.loadListValues(selectedLButton.getText());
         for (String s : stringRButtonList) {
             int actualPosition = rButtonPositionOperator.getActualPosition();
-            constructRButton(s, actualPosition, 28);
+            constructRButton(s, actualPosition);
             rButtonPositionOperator.changeActualPosition();
         }
         constructLines(radioButtonList.size(), 28,66);
@@ -600,7 +591,7 @@ public class MainAppWindow extends Application  {
                     ArrayList<String> list = searchedLists.get(s);
                     for (int i = 0; i < list.size(); i++) {
 
-                        constructRButton(list.get(i), pos, 28);
+                        constructRButton(list.get(i), pos);
                         pos = rButtonPositionOperator.getActualPosition();
                         rButtonPositionOperator.changeActualPosition();
                     }
@@ -630,7 +621,7 @@ public class MainAppWindow extends Application  {
                     taskAdder.writeTask(text, selectedLButton.getText());
                     String task = text;
                     int actualPos = rButtonPositionOperator.getActualPosition();
-                    constructRButton(task, actualPos,28);
+                    constructRButton(task, actualPos);
                     rButtonPositionOperator.changeActualPosition();
                     deleteAllLines();
                     constructLines(radioButtonList.size(), 28, (int) radioButtonList.get(0).getLayoutY()-4);

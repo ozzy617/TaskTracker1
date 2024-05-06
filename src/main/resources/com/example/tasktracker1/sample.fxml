@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <AnchorPane fx:id="anc" maxHeight="1000.0" maxWidth="1000.0" minHeight="1000.0" minWidth="1000" prefHeight="1000.0" prefWidth="1000.0" style= "-fx-background-color: #838BA1FF" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tasktracker1.Controllers.ControllerMain">
    <children>
-      <AnchorPane prefHeight="1000.0" prefWidth="000.0" style="-fx-background-color: #474C5F">
+      <AnchorPane prefHeight="1000.0" prefWidth="000.0" style="-fx-background-color: #474C5F" fx:id="pn">
 <!--         linear-gradient(from 0% 60% to 60% 100%, #E0FFFF, #00CED1)-->
          <children>
 

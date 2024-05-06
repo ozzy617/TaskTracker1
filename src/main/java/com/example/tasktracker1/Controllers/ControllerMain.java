@@ -2,9 +2,8 @@ package com.example.tasktracker1.Controllers;
 
 import com.example.tasktracker1.MainAppWindow;
 import com.example.tasktracker1.util.StyleHelper;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -13,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -45,7 +45,11 @@ public class ControllerMain {
     @FXML
     private Label completeLabel;
 
+    @FXML
+    private AnchorPane pn;
+
     public void initialize() {
+
         searchField.setStyle("-fx-focus-color: #a41ba4; -fx-border-radius: 3px; -fx-background-color: #83899b; -fx-border-style: solid; -fx-border-color: #83899b;");
         searchField.setFocusTraversable(false);//#5a606e
         Platform.runLater(() -> anc.requestFocus());
@@ -73,25 +77,13 @@ public class ControllerMain {
                 completeLabel.setStyle("-fx-text-fill: #d0d0d0");
                 completed.setCursor(Cursor.DEFAULT);
             } else {
-
-                completed.setDisable(false);
-                completed.setStyle("-fx-background-color: #d0d0d0; -fx-background-radius: 15");
-                completeIcon.setFill(Paint.valueOf("#7C7979"));
-                completeLabel.setStyle("-fx-text-fill: #000000");
-                completed.setCursor(Cursor.HAND);
+//                completed.setDisable(false);
+//                completed.setStyle("-fx-background-color: #d0d0d0; -fx-background-radius: 15");
+//                completeIcon.setFill(Paint.valueOf("#7C7979"));
+//                completeLabel.setStyle("-fx-text-fill: #000000");
+//                completed.setCursor(Cursor.HAND);
             }
         });
-//        completed.setOnAction(e -> {
-//            completed.setStyle("-fx-background-color: #838BA1FF;-fx-background-radius: 15");
-//            completeIcon.setFill(Paint.valueOf("#d0d0d0"));
-//            completeLabel.setStyle("-fx-text-fill: #d0d0d0");
-//        });
-//        completed.setOnMouseReleased(e -> {
-//v
-//        });
-//        completed.setOnAction(e->{
-//
-//        });
     }
     private void setOnAction(String resourceName) {
         anc.getChildren().remove(plus);
